@@ -1,1 +1,2 @@
-123
+while True:
+  print('👏'*10)
