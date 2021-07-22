@@ -238,6 +238,13 @@
 <style scoped>
     .container-right-box>div{
         height: calc((100% - 45px) / 4);
+        border: 1px solid #242b78;
+        margin-bottom: 15px;
+        box-sizing: border-box;
+        padding: 5px 10px;
+    }
+    .container-right-box>div:last-child{
+        margin-bottom: 0;
     }
     .current-title:before{
         content: '';

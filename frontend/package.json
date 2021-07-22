@@ -22,6 +22,7 @@
     "@vue/cli-plugin-babel": "^3.8.0",
     "@vue/cli-service": "^3.8.0",
     "echarts-wordcloud": "^2.0.0",
+    "mathjs": "^9.4.4",
     "vue-template-compiler": "^2.6.10"
   }
 }

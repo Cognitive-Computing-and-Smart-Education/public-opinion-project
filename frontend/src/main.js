@@ -19,6 +19,9 @@ import * as echarts from 'echarts'
 
 Vue.prototype.$echarts = echarts
 
+import * as math from 'mathjs'
+Vue.prototype.$math = math;
+
 /*import VueAMap from 'vue-amap';
 Vue.use(VueAMap);
 VueAMap.initAMapApiLoader({

@@ -1,6 +1,8 @@
 <template>
     <el-container style="height: 100%">
-        <el-header height="120px">Header</el-header>
+        <el-header height="120px">
+            <current-head :name="'教育舆情监控系统'"></current-head>
+        </el-header>
         <el-main>
             <container-left class="container-left"></container-left>
             <container-center class="container-center"></container-center>
@@ -14,13 +16,15 @@
     import ContainerLeft from './container/container-left'
     import ContainerCenter from './container/container-center'
     import ContainerRight from './container/container-right'
+    import CurrentHead from '@/components/current-head'
 
     export default {
         name: "index",
         components: {
             ContainerLeft,
             ContainerCenter,
-            ContainerRight
+            ContainerRight,
+            CurrentHead
         },
         data() {
             return {
@@ -38,17 +42,14 @@
 
 <style scoped>
     /deep/ .el-header, .el-footer {
-        background-color: #B3C0D1;
-        color: #333;
         text-align: center;
-        line-height: 120px;
+        padding: 0;
     }
 
     /deep/ .el-main {
         background-color: #0e0f3c;
         color: #333;
         text-align: center;
-        line-height: 160px;
         height: calc(100% - 120px);
         display: flex;
         align-items: center;
@@ -64,8 +65,8 @@
         height: 100%;
     }
     .container-center{
-        width: calc(100% - 1100px);
+        width: calc(100% - 1030px);
         height: 100%;
-        margin: 0 50px;
+        margin: 0 15px;
     }
 </style>

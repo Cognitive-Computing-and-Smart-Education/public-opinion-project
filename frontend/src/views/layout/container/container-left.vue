@@ -4,6 +4,25 @@
             <div class="current-title">
                 事件检索
             </div>
+            <el-form :inline="true" :model="retrievalForm" class="demo-form-inline">
+                <el-form-item>
+                    <el-input v-model="retrievalForm.search" placeholder="请输入搜索内容" size="small"></el-input>
+                </el-form-item>
+                <el-form-item>
+                    <el-button type="primary" @click="onSubmit" style="background-color: #2f4e80;border-color: #2f4e80" size="mini">查询</el-button>
+                </el-form-item>
+            </el-form>
+            <div class="event-retrieval-listBox">
+                <div v-if="retrievalList.length == 0" class="event-retrieval-nodata">
+                    暂无数据
+                </div>
+                <ul v-else class="event-retrieval-list">
+                    <li v-for="(item,index) in retrievalList" :key="`retrievalList-${index}`">
+                        <span>{{ index + 1 }}</span>
+                        <p>{{ item.title }}</p>
+                    </li>
+                </ul>
+            </div>
         </div>
         <div class="ranking-list">
             <div class="current-title">
@@ -36,6 +55,24 @@
         name: "container-left",
         data() {
             return {
+                retrievalForm: {
+                    search: ''
+                },
+                retrievalList: [
+                    {
+                        code: '12',
+                        title: '1222222222222222'
+                    },{
+                        code: '22',
+                        title: '1222222222222222'
+                    },{
+                        code: '33',
+                        title: '1222222222222222'
+                    },{
+                        code: '44',
+                        title: '1222222222222222'
+                    }
+                ],
                 prizeList: [
                     {
                         id: '1',
@@ -106,6 +143,9 @@
             this.ScrollUp();
         },
         methods: {
+            onSubmit() {
+
+            },
             ScrollUp() {
                 // eslint-disable-next-line no-unused-vars
                 this.intnum = setInterval(_ => {
@@ -128,6 +168,50 @@
 </script>
 
 <style scoped>
+    .event-retrieval-listBox{
+        width: 100%;
+        margin-top: 10px;
+        height: calc(100% - 108px);
+    }
+    .event-retrieval-list{
+        width: 100%;
+        height: 100%;
+        overflow-y: auto;
+    }
+    .event-retrieval-list li{
+        height: 36px;
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        padding-bottom: 5px;
+        padding-top: 5px;
+        border-bottom: 1px solid #142852;
+    }
+    .event-retrieval-list li:last-child{
+        border-bottom: none;
+    }
+    .event-retrieval-list li span{
+        font-size: 12px;
+        color: #fff;
+        height: 100%;
+        display: inline-block;
+        margin-right: 10px;
+    }
+    .event-retrieval-list li p{
+        height: 100%;
+        font-size: 13px;
+        color: #fff;
+        word-break: break-all;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 1;
+        -webkit-box-orient: vertical;
+    }
+    /deep/ .el-input__inner{
+        background-color: rgba(0,0,0,0);
+        border-color: #2f4e80;
+    }
     .current-title:before{
         content: '';
         display: inline-block;
@@ -148,7 +232,7 @@
     .event-retrieval{
         height: 340px;
         box-sizing: border-box;
-        border: 1px solid #242b78;
+        border: 1px solid #1e2252;
         padding: 10px;
     }
     .flex-box{
@@ -161,7 +245,7 @@
         box-sizing: border-box;
         margin-top: 20px;
         height: calc(100% - 360px);
-        border: 1px solid #242b78;
+        border: 1px solid #1e2252;
         padding: 10px;
     }
     .message-box{
