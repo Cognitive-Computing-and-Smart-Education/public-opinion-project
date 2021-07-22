@@ -74,9 +74,17 @@ WSGI_APPLICATION = 'posms.wsgi.application'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 DATABASES = {
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.sqlite3',
+    #     'NAME': BASE_DIR / 'db.sqlite3',
+    # }
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',  # 数据库驱动
+        'NAME': 'weibo',  # 数据库名
+        'USER': 'root',  # 用户名
+        'PASSWORD': '123456',  # 密码
+        'HOST': '13bfc66f81062088.natapp.cc',  # 数据库地址
+        'PORT': '8888'  # 链接数据端口
     }
 }
 
