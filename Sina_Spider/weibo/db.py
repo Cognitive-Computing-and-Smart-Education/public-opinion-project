@@ -1,12 +1,12 @@
 import pymysql
 import traceback
 
-# p
-host = "172.18.40.39"  # 小邵研究院笔记本
-# host = "127.0.0.1"
+# host = "13bfc66f81062088.natapp.cc"  # 小邵笔记本
+host = "127.0.0.1"  # 小邵笔记本
 user = "root"
 password = "123456"
 db = "weibo"
+port = 3306
 
 
 def get_conn():
@@ -18,6 +18,7 @@ def get_conn():
                            user=user,
                            password=password,
                            db=db,
+                           port=port,
                            charset="utf8mb4")
     # 创建游标
     cursor = conn.cursor()  # 执行完毕返回的结果集默认以元组显示
