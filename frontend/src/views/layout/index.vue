@@ -2,26 +2,36 @@
     <el-container style="height: 100%">
         <el-header height="120px">Header</el-header>
         <el-main>
-            <div id="container" style="width:500px; height:300px"></div>
+            <container-left class="container-left"></container-left>
+            <container-center class="container-center"></container-center>
+            <container-right class="container-right"></container-right>
 <!--            <el-amap class="amap-box" :vid="'amap-vue'" style="width:500px; height:300px"></el-amap>-->
         </el-main>
     </el-container>
 </template>
 
 <script>
+    import ContainerLeft from './container/container-left'
+    import ContainerCenter from './container/container-center'
+    import ContainerRight from './container/container-right'
+
     export default {
         name: "index",
+        components: {
+            ContainerLeft,
+            ContainerCenter,
+            ContainerRight
+        },
+        data() {
+            return {
+
+            };
+        },
         mounted () {
-            this.init()
+
         },
         methods: {
-            init () {
-                let map = new AMap.Map('container', {
-                    center: [116.397428, 39.90923],
-                    resizeEnable: true,
-                    zoom: 10
-                })
-            }
+
         }
     }
 </script>
@@ -35,10 +45,27 @@
     }
 
     /deep/ .el-main {
-        background-color: #E9EEF3;
+        background-color: #0e0f3c;
         color: #333;
         text-align: center;
         line-height: 160px;
         height: calc(100% - 120px);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .container-left{
+        width: 500px;
+        height: 100%;
+    }
+    .container-right{
+        width: 500px;
+        height: 100%;
+    }
+    .container-center{
+        width: calc(100% - 1100px);
+        height: 100%;
+        margin: 0 50px;
     }
 </style>

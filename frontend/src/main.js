@@ -15,6 +15,10 @@ Vue.use(elementUI); //设置elementUI。
 import axios from 'axios';
 Vue.prototype.axios = axios;
 
+import * as echarts from 'echarts'
+
+Vue.prototype.$echarts = echarts
+
 /*import VueAMap from 'vue-amap';
 Vue.use(VueAMap);
 VueAMap.initAMapApiLoader({
