@@ -3,7 +3,7 @@ import requests
 import random
 import re
 from lxml import etree
-import db
+from weibo import db
 import time
 
 # Cookie = "SINAGLOBAL=4869597537665.138.1625798329174;
