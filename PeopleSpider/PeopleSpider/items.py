@@ -19,6 +19,6 @@ class TitleItem(Item):
     # name = scrapy.Field()
     title_id = Field()
     originalName = Field()
-
+    key = Field()
     title = Field()
     url = Field()
