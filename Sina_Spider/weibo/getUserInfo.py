@@ -89,6 +89,7 @@ def create_uid():
 
 def main():
     sql = "select `uid` from user where `uname` is null "
+    sql = "select `uid` from user "
     query = db.query(sql)
     for i in query:
         uid = i[0]
