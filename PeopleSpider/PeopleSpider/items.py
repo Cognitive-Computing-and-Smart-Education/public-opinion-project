@@ -22,3 +22,14 @@ class TitleItem(Item):
     key = Field()
     title = Field()
     url = Field()
+    upload_time = Field()
+
+
+class TextItem(Item):
+    # define the fields for your item here like:
+    # name = scrapy.Field()
+    title_id = Field()
+    originalName = Field()
+    title = Field()
+
+    text = Field()

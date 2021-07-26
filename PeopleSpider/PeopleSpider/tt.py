@@ -1,5 +1,7 @@
 import time
+import datetime
 
-te = 1626923488000.0
+ts = 1626923488000//1000
 
-print(time.time())
+dt = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(ts))
+print(dt)

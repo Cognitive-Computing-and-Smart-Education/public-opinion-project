@@ -6,6 +6,7 @@ from PeopleSpider.items import *
 from lxml.etree import HTML
 from PeopleSpider import db
 from pymysql.converters import escape_string
+import time
 
 
 class PeopleSpider(scrapy.Spider):
@@ -37,7 +38,7 @@ class PeopleSpider(scrapy.Spider):
         "type": 1,
     }
 
-    SQL = "CREATE TABLE IF NOT EXISTS `people_news`  (`title_id` bigint NOT NULL,`originalName` varchar(255) ,`title` varchar(255) ,`url` varchar(255),`key` varchar(255),PRIMARY KEY (`title_id`) USING BTREE);"
+    SQL = "CREATE TABLE IF NOT EXISTS `people_news`  (`title_id` bigint NOT NULL,`originalName` varchar(255) ,`title` varchar(255) ,`url` varchar(255) ,`key` varchar(255) ,`text` longtext,`upload_time` datetime,PRIMARY KEY (`title_id`) USING BTREE);"
     db.exec_(SQL)
 
     def start_requests(self):
@@ -66,6 +67,10 @@ class PeopleSpider(scrapy.Spider):
                 item['title'] = escape_string(''.join(html))
                 item['url'] = info.get('url')
                 item['key'] = response.meta['key']
+
+                ts = int(info.get("inputTime")) // 1000
+
+                item['upload_time'] = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(ts))
 
                 yield item
 
