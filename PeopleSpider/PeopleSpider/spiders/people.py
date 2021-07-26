@@ -36,8 +36,9 @@ class PeopleSpider(scrapy.Spider):
         "type": 1,
     }
 
-    SQL = "CREATE TABLE IF NOT EXISTS `people_news`  (`title_id` bigint NOT NULL,`originalName` varchar(255) ,`title` varchar(255) ,`url` varchar(255),PRIMARY KEY (`title_id`) USING BTREE);"
+    SQL = "CREATE TABLE IF NOT EXISTS `people_news`  (`title_id` bigint NOT NULL,`originalName` varchar(255) ,`title` varchar(255) ,`url` varchar(255),`key` varchar(255),PRIMARY KEY (`title_id`) USING BTREE);"
     db.exec_(SQL)
+
     def start_requests(self):
         page = 1
         for key in self.keys:
@@ -63,6 +64,7 @@ class PeopleSpider(scrapy.Spider):
 
                 item['title'] = ''.join(html)
                 item['url'] = info.get('url')
+                item['key'] = response.meta['key']
 
                 yield item
 

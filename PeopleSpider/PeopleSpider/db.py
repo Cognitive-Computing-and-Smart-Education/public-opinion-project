@@ -3,7 +3,7 @@ import traceback
 
 # host = "13bfc66f81062088.natapp.cc"  # 小邵笔记本
 # host = "127.0.0.1"
-host = "192.168.0.107"
+host = "shaoyuexin.tpddns.cn"
 user = "root"
 password = "123456"
 db = "weibo"

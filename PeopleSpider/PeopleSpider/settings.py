@@ -19,6 +19,7 @@ NEWSPIDER_MODULE = 'PeopleSpider.spiders'
 
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = False
+# LOG_LEVEL = 'WARNING'
 LOG_LEVEL = 'WARNING'
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
 # CONCURRENT_REQUESTS = 8
@@ -94,7 +95,7 @@ ITEM_PIPELINES = {
 
 # 指定Redis的主机名和端口
 # REDIS_HOST = 'localhost'
-REDIS_HOST = '192.168.0.107'
+REDIS_HOST = '100.64.29.139'
 REDIS_PORT = 6379
 # REDIS_PASSWORD = 123456
 
