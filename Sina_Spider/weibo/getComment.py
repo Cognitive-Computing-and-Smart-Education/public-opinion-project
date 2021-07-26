@@ -3,7 +3,7 @@ import json
 import requests
 import re
 from lxml import etree
-import db
+from weibo import db
 from pymysql.converters import escape_string
 import time
 
