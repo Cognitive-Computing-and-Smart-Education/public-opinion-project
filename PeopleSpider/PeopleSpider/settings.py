@@ -21,7 +21,7 @@ NEWSPIDER_MODULE = 'PeopleSpider.spiders'
 ROBOTSTXT_OBEY = False
 LOG_LEVEL = 'WARNING'
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
-CONCURRENT_REQUESTS = 4
+# CONCURRENT_REQUESTS = 8
 
 # Configure a delay for requests for the same website (default: 0)
 # See https://doc.scrapy.org/en/latest/topics/settings.html#download-delay
@@ -67,14 +67,15 @@ CONCURRENT_REQUESTS = 4
 # Configure item pipelines
 # See https://doc.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
-   'PeopleSpider.pipelines.PeoplespiderPipeline': 300,
+    'PeopleSpider.pipelines.PeoplespiderPipeline': 300,
+
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See https://doc.scrapy.org/en/latest/topics/autothrottle.html
 # AUTOTHROTTLE_ENABLED = True
 # The initial download delay
-AUTOTHROTTLE_START_DELAY = 4
+# AUTOTHROTTLE_START_DELAY = 4
 # The maximum download delay to be set in case of 4high latencies
 # AUTOTHROTTLE_MAX_DELAY = 60
 # The average number of requests Scrapy should be sending in parallel to
@@ -90,3 +91,22 @@ AUTOTHROTTLE_START_DELAY = 4
 # HTTPCACHE_DIR = 'httpcache'
 # HTTPCACHE_IGNORE_HTTP_CODES = []
 # HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'
+
+# 指定Redis的主机名和端口
+# REDIS_HOST = 'localhost'
+REDIS_HOST = '192.168.0.107'
+REDIS_PORT = 6379
+# REDIS_PASSWORD = 123456
+
+# 设置重复过滤器模块
+DUPEFILTER_CLASS = "scrapy_redis.dupefilter.RFPDupeFilter"
+# 设置调度器,scrapy_redis中的调度器具备与数据库交互的功能
+SCHEDULER = "scrapy_redis.scheduler.Scheduler"
+# 设置当爬虫结束的时候是否保持redis数据库中的去重集合与任务队列
+SCHEDULER_PERSIST = True
+# SCHEDULER_QUEUE_CLASS = "scrapy_redis.queue.SpiderPriorityQueue"
+# SCHEDULER_QUEUE_CLASS = "scrapy_redis.queue.SpiderQueue"
+# SCHEDULER_QUEUE_CLASS = "scrapy_redis.queue.SpiderStack"
+
+
+DOWNLOAD_DELAY = 1

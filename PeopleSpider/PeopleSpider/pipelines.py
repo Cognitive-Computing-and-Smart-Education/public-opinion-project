@@ -15,3 +15,4 @@ class PeoplespiderPipeline(object):
 
             db.exec_(sql)
             print(item)
+            return item

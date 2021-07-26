@@ -4,13 +4,15 @@ import json
 from scrapy import Request, FormRequest
 from PeopleSpider.items import *
 from lxml.etree import HTML
+from PeopleSpider import db
 
 
 class PeopleSpider(scrapy.Spider):
     name = 'people'
     allowed_domains = ['search.people.cn']
     url = 'http://search.people.cn/api-search/elasticSearch/search'
-    keys = ['教育', '教学', '体育教育', '智慧教育', '科技', '体育', ]+['国际教育', '特殊教育', '学科竞赛', '职业教育', 'K12', "婴儿教育", "幼儿教育"]+['艺术培训', '远程教育', '线下教育', 'steam教育', '应试教育', '中考', '高考', '课外辅导', '科普教育', '海外教育', '爱国教育', ]
+    keys = ['教育', '教学', '体育教育', '智慧教育', '科技', '体育', ] + ['国际教育', '特殊教育', '学科竞赛', '职业教育', 'K12', "婴儿教育", "幼儿教育"] + [
+        '艺术培训', '远程教育', '线下教育', 'steam教育', '应试教育', '中考', '高考', '课外辅导', '科普教育', '海外教育', '爱国教育', ]
 
     # keys = ['国际教育', '特殊教育', '学科竞赛', '职业教育', 'K12', "婴儿教育", "幼儿教育"]
 
@@ -35,7 +37,7 @@ class PeopleSpider(scrapy.Spider):
     }
 
     SQL = "CREATE TABLE IF NOT EXISTS `people_news`  (`title_id` bigint NOT NULL,`originalName` varchar(255) ,`title` varchar(255) ,`url` varchar(255),PRIMARY KEY (`title_id`) USING BTREE);"
-
+    db.exec_(SQL)
     def start_requests(self):
         page = 1
         for key in self.keys:
@@ -46,6 +48,7 @@ class PeopleSpider(scrapy.Spider):
                           meta={'key': key, 'page': page})
 
     def parse(self, response):
+
         data = json.loads(response.text).get("data")
 
         pages = data.get('pages')
