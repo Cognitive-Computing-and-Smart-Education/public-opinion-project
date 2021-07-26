@@ -27,12 +27,18 @@ def get_article_page(docurl):
     response = requests.get(docurl,headers=headers,verify=False)
     doc_html = response.text
     doc_xml = etree.HTML(doc_html)
-    doc_title = doc_xml.xpath('//h1[@class="post_title]/text()')
-    return  doc_title
+    doc_title = doc_xml.xpath('//h1[@class="post_title"]/text()')
+    doc_info = doc_xml.xpath('//div[@class="post_info"]/text()')
+    doc_content = doc_xml.xpath('//*[@id="content"]/div[2]//*/text()')
+    doc_text = ''
+    for p in doc_content:
+        doc_text += str(p)
+    return  doc_title,doc_info,doc_text
 
 
 if __name__ == '__main__':
     text = get_page()
     title,docurl = parse_page(text)
+    print(docurl[0])
     doc_text = get_article_page(docurl[0])
     print(doc_text)
