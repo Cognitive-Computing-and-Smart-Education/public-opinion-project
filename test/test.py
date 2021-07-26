@@ -1,7 +1,8 @@
 import requests
+import re
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 from bs4 import BeautifulSoup
-import re
+from lxml import etree
 
 def get_page():
     url = 'https://edu.163.com/special/002987KB/newsdata_edu_hot.js?callback=data_callback'
@@ -25,10 +26,9 @@ def get_article_page(docurl):
     requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
     response = requests.get(docurl,headers=headers,verify=False)
     doc_html = response.text
-    doc_title = re.findall(r'<h1 class="post_title">(.*?)</h1>',doc_html)
-    doc_info = re.findall(r'<div class="post_info">(.*?)</a>',doc_html)
-    doc_text = re.findall(r'<div class="post_body">(.*?)<!-- AD200x300_1 -->')
-    return  doc_html
+    doc_xml = etree.HTML(doc_html)
+    doc_title = doc_xml.xpath('//h1[@class="post_title]/text()')
+    return  doc_title
 
 
 if __name__ == '__main__':
