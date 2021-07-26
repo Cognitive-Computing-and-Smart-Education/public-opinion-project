@@ -11,7 +11,8 @@ from PeopleSpider import db
 class PeoplespiderPipeline(object):
     def process_item(self, item, spider):
         if isinstance(item, TitleItem):
-            sql = f"insert into people_news(`title_id`,`originalName`,`title`,`url`,`key`) values ({item['title_id']},'{item['originalName']}','{item['title']}','{item['url']}');"
+            sql = f"""insert into people_news(`title_id`,`originalName`,`title`,`url`,`key`) values ({item['title_id']},'{item['originalName']}','{item['title']}','{item['url']}','{item['key']}');"""
             db.exec_(sql)
+            print(sql)
             print(item)
             return item

@@ -5,6 +5,7 @@ from scrapy import Request, FormRequest
 from PeopleSpider.items import *
 from lxml.etree import HTML
 from PeopleSpider import db
+from pymysql.converters import escape_string
 
 
 class PeopleSpider(scrapy.Spider):
@@ -58,11 +59,11 @@ class PeopleSpider(scrapy.Spider):
             for info in info_lsit:
                 item = TitleItem()
                 item['title_id'] = info.get('id')
-                item['originalName'] = info.get('originalName')
+                item['originalName'] = escape_string(info.get('originalName'))
                 title = info.get('title')
                 html = HTML(title).xpath("//text()")
 
-                item['title'] = ''.join(html)
+                item['title'] = escape_string(''.join(html))
                 item['url'] = info.get('url')
                 item['key'] = response.meta['key']
 
