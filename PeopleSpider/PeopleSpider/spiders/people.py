@@ -74,10 +74,12 @@ class PeopleSpider(scrapy.Spider):
 
                 yield item
 
-        key = response.meta['key']
-        page = response.meta['page'] + 1
-        self.data['key'] = key
-        self.data['page'] = page
-        yield Request(self.url, body=json.dumps(self.data), method='POST', headers=self.headers,
-                      callback=self.parse,
-                      meta={'key': key, 'page': page})
+            key = response.meta['key']
+            page = response.meta['page'] + 1
+            self.data['key'] = key
+            self.data['page'] = page
+            yield Request(self.url, body=json.dumps(self.data), method='POST', headers=self.headers,
+                          callback=self.parse,
+                          meta={'key': key, 'page': page})
+        else:
+            return

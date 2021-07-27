@@ -2,8 +2,8 @@ import pymysql
 import traceback
 
 # host = "13bfc66f81062088.natapp.cc"  # 小邵笔记本
-# host = "127.0.0.1"
-host = "100.64.29.139"
+host = "127.0.0.1"
+# host = "100.64.25.132"
 user = "root"
 password = "123456"
 db = "weibo"
