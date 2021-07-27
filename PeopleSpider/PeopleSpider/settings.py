@@ -112,4 +112,4 @@ SCHEDULER_PERSIST = True
 # SCHEDULER_QUEUE_CLASS = "scrapy_redis.queue.SpiderStack"
 
 
-DOWNLOAD_DELAY = 1
+DOWNLOAD_DELAY = 2
