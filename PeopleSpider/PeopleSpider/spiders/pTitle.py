@@ -22,7 +22,7 @@ class PeopleSpider(scrapy.Spider):
     }
 
     def start_requests(self):
-        self.stat_sql = "select `title_id`,`url` from people_news where `url` like '%%people.com.cn%%' and `text` is NULL order by `title_id` desc;"
+        self.stat_sql = "select `title_id`,`url` from people_news where `url` like '%%people.com.cn%%' and `text` is NULL order by `title_id` desc ;"
         self.query = db.query(self.stat_sql)
         # url = 'http://sd.people.com.cn/n2/2021/0720/c386784-34829035.html'
         # url = 'http://gx.people.com.cn/n2/2021/0713/c390645-34817944.html'
@@ -31,9 +31,9 @@ class PeopleSpider(scrapy.Spider):
                 title_id = i[0]
                 url = i[1]
                 # print(title_id)
-                yield Request(url, headers=self.headers, callback=self.parse_text, meta={'title_id': title_id})
+                yield Request(url, headers=self.headers, callback=self.parse, meta={'title_id': title_id})
 
-    def parse_text(self, response):
+    def parse(self, response):
 
         # 文本内容
         text = response.xpath("//p/text()").extract()
