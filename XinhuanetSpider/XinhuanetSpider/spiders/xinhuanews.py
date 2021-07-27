@@ -41,7 +41,7 @@ class XinhuanewsSpider(Spider):
         page = response.meta['page']
         key = response.meta['key']
         pageCount = data.get("pageCount")
-        if page <= pageCount:
+        if pageCount and page <= pageCount:
             results = data.get("results")
             for result in results:
                 # 新闻ID
