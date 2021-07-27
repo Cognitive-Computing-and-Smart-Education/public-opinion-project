@@ -15,7 +15,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from first.views import search,get_num
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('get_news/',search),#获取指定文章列表
+    path('get_news_num/',get_num),#获取数据量
 ]
