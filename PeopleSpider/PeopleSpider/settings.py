@@ -19,8 +19,8 @@ NEWSPIDER_MODULE = 'PeopleSpider.spiders'
 
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = False
-# LOG_LEVEL = 'WARNING'
-LOG_LEVEL = 'DEBUG'
+LOG_LEVEL = 'WARNING'
+# LOG_LEVEL = 'DEBUG'
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
 # CONCURRENT_REQUESTS = 8
 

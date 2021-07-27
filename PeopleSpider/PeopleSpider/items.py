@@ -31,5 +31,4 @@ class TextItem(Item):
     title_id = Field()
     originalName = Field()
     title = Field()
-
     text = Field()
