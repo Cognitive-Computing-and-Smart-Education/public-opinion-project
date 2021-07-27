@@ -78,6 +78,6 @@ class XinhuanewsSpider(Spider):
                     if not v:
                         item[k] = ''
                 yield item
-        page += 1
-        yield Request(url=self.start_urls.format(key=key, page=page), callback=self.parse,
-                      meta={'key': key, "page": page})
+            page += 1
+            yield Request(url=self.start_urls.format(key=key, page=page), callback=self.parse,
+                          meta={'key': key, "page": page})

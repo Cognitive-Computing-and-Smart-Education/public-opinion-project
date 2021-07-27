@@ -13,12 +13,12 @@ from XinhuanetSpider import db
 class XinhuanetspiderPipeline:
     def process_item(self, item, spider):
         if isinstance(item, TitleItem):
-            sql = """INSERT INTO xinhuanews(`contentId`,`title`,`keyword`,`pubtime`,`sitename`,`url`,`key`) VALUES('{}','{}','{}','{}','{}','{}') ;""".format(
-                item['contentId'], item['title'], item['keyword'], item['pubtime'], item['sitename'], item['url'], )
+            sql = """INSERT INTO xinhuanews(`contentId`,`title`,`keyword`,`pubtime`,`sitename`,`url`,`key`) VALUES('{}','{}','{}','{}','{}','{}','{}') ;""".format(
+                item['contentId'], item['title'], item['keyword'], item['pubtime'], item['sitename'], item['url'], item['key'],)
 
-            sql = """INSERT INTO xinhuanews(`contentId`,`title`,`keyword`,`pubtime`,`sitename`,`url`,`key`) SELECT  %s,'%s','%s','%s','%s','%s','%s' FROM DUAL WHERE  NOT EXISTS ( SELECT `url`  FROM xinhuanews  WHERE `url`='%s' );""" % (
-                item['contentId'], item['title'], item['keyword'], item['pubtime'], item['sitename'], item['url'],
-                item['key'], item['url'],)
+            # sql = """INSERT INTO xinhuanews(`contentId`,`title`,`keyword`,`pubtime`,`sitename`,`url`,`key`) SELECT  '%s','%s','%s','%s','%s','%s','%s' FROM DUAL WHERE  NOT EXISTS ( SELECT `url`  FROM xinhuanews  WHERE `url`='%s' );""" % (
+            #     item['contentId'], item['title'], item['keyword'], item['pubtime'], item['sitename'], item['url'],
+            #     item['key'], item['url'],)
             db.exec_(sql)
             # print(sql)
             print(item)

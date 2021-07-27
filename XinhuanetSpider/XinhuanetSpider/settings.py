@@ -61,6 +61,7 @@ ROBOTSTXT_OBEY = False
 
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
+
 ITEM_PIPELINES = {
     'XinhuanetSpider.pipelines.XinhuanetspiderPipeline': 300,
 }
@@ -104,5 +105,5 @@ SCHEDULER_PERSIST = True
 
 DOWNLOAD_DELAY = 2
 
-LOG_LEVEL = 'WARNING'
-# LOG_LEVEL = 'DEBUG'
+# LOG_LEVEL = 'WARNING'
+LOG_LEVEL = 'DEBUG'
