@@ -77,7 +77,7 @@ def get_fans(uid, fans_list_id):
 
             page += 1
             # sleepTime = random.randint(1, 5)
-            time.sleep(1)
+            # time.sleep(1)
         else:
             break
     # 粉丝数
