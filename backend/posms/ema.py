@@ -6,6 +6,8 @@ import urllib.parse
 import json
 import hashlib
 import base64
+#用于计算文本的情感倾向
+
 #接口地址
 url ="http://ltpapi.xfyun.cn/v2/sa"
 #开放平台应用ID
