@@ -96,8 +96,8 @@ ITEM_PIPELINES = {
 
 
 # 指定Redis的主机名和端口
-REDIS_HOST = 'localhost'
-# REDIS_HOST = '100.64.25.132'
+# REDIS_HOST = 'localhost'
+REDIS_HOST = '172.18.40.39'
 REDIS_PORT = 6379
 
 
