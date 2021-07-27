@@ -13,7 +13,8 @@ module.exports = {
         open: false, //是否自动打开。
         port: 8091, //打开系统的端口号。
         https: false,
-        disableHostCheck: true
+        disableHostCheck: true,
+        proxy: 'http://localhost:4000'
     },
     lintOnSave: false,
     baseUrl: BASE_URL,
