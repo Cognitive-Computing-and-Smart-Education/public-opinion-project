@@ -90,11 +90,11 @@ class PeopleSpider(scrapy.Spider):
                                   meta={'title_id': item['title_id'], 'item': item}, dont_filter=True)
 
             key = response.meta['key']
-            sql = f"select `page` from people_data where `key`='{key}'"
-            page = int(self.db2.query(sql)[0][0])
-            page = page + 1
+            # sql = f"select `page` from people_data where `key`='{key}'"
+            # page = int(self.db2.query(sql)[0][0])
+            page = response.meta['page'] + 1
 
-            self.db2.exec_(f"update people_url set `page`={page}")
+            self.db2.exec_(f"update people_data set `page`={page} where `key`='{key}'")
 
             self.data['key'] = key
             self.data['page'] = page
