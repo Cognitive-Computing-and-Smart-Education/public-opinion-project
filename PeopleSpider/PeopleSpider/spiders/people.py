@@ -42,12 +42,12 @@ class PeopleSpider(scrapy.Spider):
     db.exec_(SQL)
 
     def start_requests(self):
-        page = 1
+        page = 40
         for key in self.keys:
             self.data['key'] = key
             self.data['page'] = page
             yield Request(self.url, body=json.dumps(self.data), headers=self.headers, callback=self.parse,
-                          meta={'key': key, 'page': page}, dont_filter=True)
+                          meta={'key': key, 'page': page},)
 
     def parse(self, response):
 
@@ -81,7 +81,7 @@ class PeopleSpider(scrapy.Spider):
             self.data['page'] = page
             yield Request(self.url, body=json.dumps(self.data), method='POST', headers=self.headers,
                           callback=self.parse,
-                          meta={'key': key, 'page': page},dont_filter=True)
+                          meta={'key': key, 'page': page}, )
         else:
             return
 
@@ -92,12 +92,12 @@ class PeopleSpider(scrapy.Spider):
         text = ["".join(i.split()) for i in text]
         text = ''.join(text)
 
-        item = TextItem()
+        textitem = TextItem()
 
-        item['title_id'] = response.meta['title_id']
+        textitem['title_id'] = response.meta['title_id']
         # item['originalName'] = originalName
         # item['title'] = title
         # item['upload_time'] = upload_time
-        item['text'] = escape_string(text)
+        textitem['text'] = escape_string(text)
 
-        yield item
+        yield textitem
