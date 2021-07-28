@@ -31,7 +31,7 @@ class PeopleSpider(scrapy.Spider):
                 title_id = i[0]
                 url = i[1]
                 # print(title_id)
-                yield Request(url, headers=self.headers, callback=self.parse, meta={'title_id': title_id})
+                yield Request(url, headers=self.headers, callback=self.parse, meta={'title_id': title_id},dont_filter=True )
 
     def parse(self, response):
 

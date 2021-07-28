@@ -46,19 +46,8 @@ class PeopleSpider(scrapy.Spider):
         for key in self.keys:
             self.data['key'] = key
             self.data['page'] = page
-            yield FormRequest(self.url,
-                              # body=json.dumps(self.data),
-                              formdata={"data": self.form_data},
-                             headers=self.headers,
-                          callback=self.parse,
+            yield Request(self.url, body=json.dumps(self.data), headers=self.headers, callback=self.parse,
                           meta={'key': key, 'page': page}, dont_filter=True)
-
-    def make_request_from_data(self, data):
-        page = 1
-        for key in self.keys:
-            self.data['key'] = key
-            self.data['page'] = page
-            return scrapy.FormRequest(self.url, formdata={"data": self.form_data}, callback=self.parse)
 
     def parse(self, response):
 
@@ -92,7 +81,7 @@ class PeopleSpider(scrapy.Spider):
             self.data['page'] = page
             yield Request(self.url, body=json.dumps(self.data), method='POST', headers=self.headers,
                           callback=self.parse,
-                          meta={'key': key, 'page': page})
+                          meta={'key': key, 'page': page},dont_filter=True)
         else:
             return
 

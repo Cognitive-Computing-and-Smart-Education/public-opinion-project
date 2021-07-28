@@ -16,13 +16,18 @@ class TitlePipeline(object):
             # print(sql)
             # print(item)
             return item
-
-
-class TextPipeline(object):
-    def process_item(self, item, spider):
         if isinstance(item, TextItem):
             sql = f"update people_news set `text`='{item['text']}' where `title_id`='{item['title_id']}'"
             db.exec_(sql)
             print(item)
             # print(sql)
             return item
+
+# class TextPipeline(object):
+#     def process_item(self, item, spider):
+#         if isinstance(item, TextItem):
+#             sql = f"update people_news set `text`='{item['text']}' where `title_id`='{item['title_id']}'"
+#             db.exec_(sql)
+#             print(item)
+#             # print(sql)
+#             return item

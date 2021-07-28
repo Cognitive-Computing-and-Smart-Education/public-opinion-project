@@ -68,7 +68,7 @@ ROBOTSTXT_OBEY = False
 # See https://doc.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
     'PeopleSpider.pipelines.TitlePipeline': 300,
-    'PeopleSpider.pipelines.TextPipeline': 400,
+    # 'PeopleSpider.pipelines.TextPipeline': 400,
 
 }
 
@@ -110,7 +110,7 @@ SCHEDULER_QUEUE_CLASS = "scrapy_redis.queue.SpiderPriorityQueue"
 # SCHEDULER_QUEUE_CLASS = "scrapy_redis.queue.SpiderStack"
 
 
-DOWNLOAD_DELAY = 1
+DOWNLOAD_DELAY = 2
 
-LOG_LEVEL = 'WARNING'
-# LOG_LEVEL = 'DEBUG'
+# LOG_LEVEL = 'WARNING'
+LOG_LEVEL = 'DEBUG'

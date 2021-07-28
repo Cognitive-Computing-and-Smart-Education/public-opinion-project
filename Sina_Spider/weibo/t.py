@@ -105,7 +105,7 @@ def inset_fans_info(item):
 
 
 def main():
-    sql = "select uid,fans_list_id from user where `activeFans_count` is NULL "
+    sql = "select uid,fans_list_id from user where `activeFans_count` is NULL order by `uid` desc "
     uid_list = db.query(sql)
     for i in uid_list:
         uid = i[0]
