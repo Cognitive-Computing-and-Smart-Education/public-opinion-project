@@ -80,10 +80,11 @@ class PeopleSpider(scrapy.Spider):
                 item['upload_time'] = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(ts))
 
                 yield item
+
                 yield Request(url=item['url'], headers=self.headers, callback=self.parse_text,
                               meta={'title_id': item['title_id'], 'item': item})
 
-            self.db2.exec_('insert into people_url VALUES (%s)' % response.url)
+            # self.db2.exec_('insert into people_url VALUES (%s)' % response.url)
             # key = response.meta['key']
             # page = response.meta['page'] + 1
             # self.data['key'] = key
@@ -108,3 +109,5 @@ class PeopleSpider(scrapy.Spider):
         textitem['text'] = escape_string(text)
 
         yield textitem
+
+        # self.db2.exec_('insert into people_url VALUES (%s)' % response.url)
