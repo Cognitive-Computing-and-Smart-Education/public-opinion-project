@@ -14,10 +14,10 @@ class PeopleSpider(scrapy.Spider):
     name = 'people'
     allowed_domains = ['search.people.cn']
     url = 'http://search.people.cn/api-search/elasticSearch/search'
-    # keys = ['教育', '教学', '体育教育', '智慧教育', '科技', '体育', ] + ['国际教育', '特殊教育', '学科竞赛', '职业教育', 'K12', "婴儿教育", "幼儿教育"] + [
-    #     '艺术培训', '远程教育', '线下教育', 'steam教育', '应试教育', '中考', '高考', '课外辅导', '科普教育', '海外教育', '爱国教育', ]
+    keys = ['教育', '教学', '体育教育', '智慧教育', '科技', '体育', ] + ['国际教育', '特殊教育', '学科竞赛', '职业教育', 'K12', "婴儿教育", "幼儿教育"] + [
+        '艺术培训', '远程教育', '线下教育', 'steam教育', '应试教育', '中考', '高考', '课外辅导', '科普教育', '海外教育', '爱国教育', ]
 
-    keys = ["四川", '成都', '天津']
+    # keys = ["四川", '成都', '天津']
 
     # keys = ['艺术培训', '远程教育', '线下教育', 'steam教育', '应试教育', '中考', '高考', '课外辅导', '科普教育', '海外教育', '爱国教育', ]
 
@@ -54,7 +54,7 @@ class PeopleSpider(scrapy.Spider):
             self.data['key'] = key
             self.data['page'] = page
             self.headers['Referer'] = f'http://search.people.cn/s/?keyword={key}&st=0&_=1627454684554'
-            yield Request(self.url, body=json.dumps(self.data), headers=self.headers, callback=self.parse,
+            yield Request(self.url, method="POST",body=json.dumps(self.data), headers=self.headers, callback=self.parse,
                           meta={'key': key, 'page': page}, dont_filter=True)
 
     def parse(self, response):
