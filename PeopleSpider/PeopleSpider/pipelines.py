@@ -8,15 +8,18 @@ from PeopleSpider.items import *
 from PeopleSpider import db
 
 
-class PeoplespiderPipeline(object):
+class TitlePipeline(object):
     def process_item(self, item, spider):
         if isinstance(item, TitleItem):
             sql = f"""insert into people_news(`title_id`,`originalName`,`title`,`url`,`key`,`upload_time`) values ({item['title_id']},'{item['originalName']}','{item['title']}','{item['url']}','{item['key']}','{item['upload_time']}');"""
             db.exec_(sql)
             # print(sql)
-            print(item)
+            # print(item)
             return item
 
+
+class TextPipeline(object):
+    def process_item(self, item, spider):
         if isinstance(item, TextItem):
             sql = f"update people_news set `text`='{item['text']}' where `title_id`='{item['title_id']}'"
             db.exec_(sql)

@@ -22,7 +22,7 @@ class PeopleSpider(scrapy.Spider):
     }
 
     def start_requests(self):
-        self.stat_sql = "select `title_id`,`url` from people_news where `url` like '%%people.com.cn%%' and `text` is NULL ;"
+        self.stat_sql = "select `title_id`,`url` from people_news where `url` like '%%people.com.cn%%' and `text` is NULL order by `title_id` desc ;"
         self.query = db.query(self.stat_sql)
         # url = 'http://sd.people.com.cn/n2/2021/0720/c386784-34829035.html'
         # url = 'http://gx.people.com.cn/n2/2021/0713/c390645-34817944.html'

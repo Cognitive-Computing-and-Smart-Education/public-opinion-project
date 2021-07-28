@@ -46,9 +46,19 @@ class PeopleSpider(scrapy.Spider):
         for key in self.keys:
             self.data['key'] = key
             self.data['page'] = page
-            yield Request(self.url, body=json.dumps(self.data), method='POST', headers=self.headers,
+            yield FormRequest(self.url,
+                              # body=json.dumps(self.data),
+                              formdata={"data": self.form_data},
+                             headers=self.headers,
                           callback=self.parse,
-                          meta={'key': key, 'page': page})
+                          meta={'key': key, 'page': page}, dont_filter=True)
+
+    def make_request_from_data(self, data):
+        page = 1
+        for key in self.keys:
+            self.data['key'] = key
+            self.data['page'] = page
+            return scrapy.FormRequest(self.url, formdata={"data": self.form_data}, callback=self.parse)
 
     def parse(self, response):
 
@@ -73,6 +83,8 @@ class PeopleSpider(scrapy.Spider):
                 item['upload_time'] = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(ts))
 
                 yield item
+                yield Request(url=item['url'], headers=self.headers, callback=self.parse_text,
+                              meta={'title_id': item['title_id']})
 
             key = response.meta['key']
             page = response.meta['page'] + 1
@@ -83,3 +95,20 @@ class PeopleSpider(scrapy.Spider):
                           meta={'key': key, 'page': page})
         else:
             return
+
+    def parse_text(self, response):
+
+        # 文本内容
+        text = response.xpath("//p/text()").extract()
+        text = ["".join(i.split()) for i in text]
+        text = ''.join(text)
+
+        item = TextItem()
+
+        item['title_id'] = response.meta['title_id']
+        # item['originalName'] = originalName
+        # item['title'] = title
+        # item['upload_time'] = upload_time
+        item['text'] = escape_string(text)
+
+        yield item
