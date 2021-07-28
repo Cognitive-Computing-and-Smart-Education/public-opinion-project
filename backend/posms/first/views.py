@@ -9,9 +9,13 @@ from ema import ema
 
 # Create your views here.
 
-def search(request):#获取指定文章列表
+def search(request):#获取指定文章列表  
+    # keywords = request.GET.get('keyword')
     request.params = json.loads(request.body)
-    keywords = request.params['Keyword']
+    try:
+        keywords = request.params['Keyword']
+    except:
+        return JsonResponse({'code': 1,  'msg': '请求参数没拿到'})
     try:
         #只取三个字段
         qs = Title.objects.values('title_id','title','openurl')#.order_by('-title_id')
