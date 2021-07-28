@@ -1,6 +1,6 @@
 <template>
     <el-container style="height: 100%">
-        <el-header height="120px">
+        <el-header height="80px">
             <current-head :name="'教育舆情监控系统'"></current-head>
         </el-header>
         <el-main>

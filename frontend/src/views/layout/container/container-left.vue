@@ -6,7 +6,7 @@
             </div>
             <el-form :inline="true" :model="retrievalForm" class="demo-form-inline">
                 <el-form-item>
-                    <el-input v-model="retrievalForm.search" placeholder="请输入搜索内容" size="small"></el-input>
+                    <el-input style="width: 400px" v-model="retrievalForm.search" placeholder="请输入搜索内容" size="small"></el-input>
                 </el-form-item>
                 <el-form-item>
                     <el-button type="primary" @click="onSubmit" style="background-color: #2f4e80;border-color: #2f4e80" size="mini">查询</el-button>
@@ -27,7 +27,7 @@
         <div class="ranking-list">
             <div class="current-title">
                 <div class="flex-box">
-                    <el-button type="primary" plain size="small">热点信息排行榜</el-button>
+                    <el-button type="primary" plain size="small" @click="geiMessage">热点信息排行榜</el-button>
                     <el-button type="primary" plain size="small">信息类型筛选</el-button>
                 </div>
             </div>
@@ -51,6 +51,8 @@
 </template>
 
 <script>
+    import { getUserInfo } from '@/api/user'
+
     export default {
         name: "container-left",
         data() {
@@ -143,6 +145,11 @@
             this.ScrollUp();
         },
         methods: {
+            geiMessage() {
+                getUserInfo({ userId: 23 }).then(res => {
+                    console.log(res)
+                })
+            },
             onSubmit() {
 
             },
@@ -261,9 +268,9 @@
         align-items: center;
         justify-content: flex-start;
         height: 102px;
-        padding-bottom: 8px;
+        padding-bottom: 12px;
         border-bottom: 1px solid #142852;
-        padding-top: 8px;
+        padding-top: 12px;
     }
     .scroll-content li:last-child{
         border-bottom: none;

@@ -4,7 +4,7 @@ import {stripObject} from './utils'
 
 class HttpRequest {
     constructor(options) {
-        this.baseUrl = 'http://localhost:4000'
+        this.baseUrl = 'http://localhost:8091'
         this.queue = {}
     }
     getInsideConfig() {
@@ -19,6 +19,7 @@ class HttpRequest {
     }
     interceptors(instance) {
         instance.interceptors.request.use(config => {
+            console.log(config)
             // 添加全局去除空格
             if(!config.noTrim){
                 //全局去除空格 可以用noTrim 来控制不进行全局去除空格
@@ -53,6 +54,7 @@ class HttpRequest {
             console.log(res)
             return res
         },error => {
+            console.log('error',error)
             Message({
                 message: error.message,
                 type: 'error',
