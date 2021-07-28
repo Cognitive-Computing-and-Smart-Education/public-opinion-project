@@ -4,22 +4,20 @@ import json
 from scrapy import Request, FormRequest
 from PeopleSpider.items import *
 from lxml.etree import HTML
-from PeopleSpider import db
+from PeopleSpider.db import db
 from pymysql.converters import escape_string
 import time
 from fake_useragent import UserAgent
-
-ua = UserAgent()
 
 
 class PeopleSpider(scrapy.Spider):
     name = 'people'
     allowed_domains = ['search.people.cn']
     url = 'http://search.people.cn/api-search/elasticSearch/search'
-    keys = ['教育', '教学', '体育教育', '智慧教育', '科技', '体育', ] + ['国际教育', '特殊教育', '学科竞赛', '职业教育', 'K12', "婴儿教育", "幼儿教育"] + [
-        '艺术培训', '远程教育', '线下教育', 'steam教育', '应试教育', '中考', '高考', '课外辅导', '科普教育', '海外教育', '爱国教育', ]
+    # keys = ['教育', '教学', '体育教育', '智慧教育', '科技', '体育', ] + ['国际教育', '特殊教育', '学科竞赛', '职业教育', 'K12', "婴儿教育", "幼儿教育"] + [
+    #     '艺术培训', '远程教育', '线下教育', 'steam教育', '应试教育', '中考', '高考', '课外辅导', '科普教育', '海外教育', '爱国教育', ]
 
-    keys = ['国际教育', '特殊教育', '学科竞赛', '职业教育', 'K12', "婴儿教育", "幼儿教育"]
+    keys = ["四川", '成都', '天津']
 
     # keys = ['艺术培训', '远程教育', '线下教育', 'steam教育', '应试教育', '中考', '高考', '课外辅导', '科普教育', '海外教育', '爱国教育', ]
 
@@ -40,21 +38,24 @@ class PeopleSpider(scrapy.Spider):
         "startTime": 0,
         "type": 1,
     }
-    proxy = 'http://127.0.0.1:10809/'
-
+    db1 = db(db="weibo")
     SQL = "CREATE TABLE IF NOT EXISTS `people_news`  (`title_id` bigint NOT NULL,`originalName` varchar(255) ,`title` varchar(255) ,`url` varchar(255) ,`key` varchar(255) ,`text` longtext,`upload_time` datetime,PRIMARY KEY (`title_id`) USING BTREE);"
-    db.exec_(SQL)
+    db1.exec_(SQL)
+
+    db2 = db(db="redis")
 
     def start_requests(self):
-        # import os
-        # os.environ["HTTP_PROXY"] = "http://127.0.0.1:10809"
-        page = 100
         for key in self.keys:
+            sql = f"select `page` from people_data where `key`='{key}'"
+            if not self.db2.query(sql):
+                self.db2.exec_(f"insert into people_data VALUES ('{key}',1)")
+            page = self.db2.query(sql)[0][0]
+
             self.data['key'] = key
             self.data['page'] = page
             self.headers['Referer'] = f'http://search.people.cn/s/?keyword={key}&st=0&_=1627454684554'
             yield Request(self.url, body=json.dumps(self.data), headers=self.headers, callback=self.parse,
-                          meta={'key': key, 'page': page}, )
+                          meta={'key': key, 'page': page}, dont_filter=True)
 
     def parse(self, response):
 
@@ -82,6 +83,7 @@ class PeopleSpider(scrapy.Spider):
                 yield Request(url=item['url'], headers=self.headers, callback=self.parse_text,
                               meta={'title_id': item['title_id'], 'item': item})
 
+            self.db2.exec_('insert into people_url VALUES (%s)' % response.url)
             # key = response.meta['key']
             # page = response.meta['page'] + 1
             # self.data['key'] = key
@@ -89,8 +91,6 @@ class PeopleSpider(scrapy.Spider):
             # yield Request(self.url, body=json.dumps(self.data), method='POST', headers=self.headers,
             #               callback=self.parse,
             #               meta={'key': key, 'page': page}, )
-        else:
-            return
 
     def parse_text(self, response):
 

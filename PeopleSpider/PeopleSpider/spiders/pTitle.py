@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import scrapy
 import json
-from scrapy import Request, FormRequest
+from scrapy import Request, FormRequest,Spider
 from PeopleSpider.items import *
 from lxml.etree import HTML
 from PeopleSpider import db
@@ -9,7 +9,7 @@ from pymysql.converters import escape_string
 import re
 
 
-class PeopleSpider(scrapy.Spider):
+class PeopleSpider(Spider):
     name = 'pTitle'
     allowed_domains = ['search.people.cn']
 
