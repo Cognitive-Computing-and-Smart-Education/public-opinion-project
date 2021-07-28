@@ -17,13 +17,14 @@ class TitlePipeline(object):
             sql = f"""insert into people_news(`title_id`,`originalName`,`title`,`url`,`key`,`upload_time`) values ({item['title_id']},'{item['originalName']}','{item['title']}','{item['url']}','{item['key']}','{item['upload_time']}');"""
             self.db.exec_(sql)
             # print(sql)
-            print(item)
+            return item
 
         if isinstance(item, TextItem):
             sql = f"update people_news set `text`='{item['text']}' where `title_id`='{item['title_id']}'"
             self.db.exec_(sql)
-            print(item)
+            # print(item)
             # print(sql)
+            return item
 
 # class TextPipeline(object):
 #     def process_item(self, item, spider):

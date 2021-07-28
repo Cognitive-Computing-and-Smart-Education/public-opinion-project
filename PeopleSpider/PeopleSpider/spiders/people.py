@@ -52,7 +52,8 @@ class PeopleSpider(scrapy.Spider):
             self.data['key'] = key
             self.data['page'] = page
             self.headers['Referer'] = f'http://search.people.cn/s/?keyword={key}&st=0&_=1627454684554'
-            yield Request(self.url, method="POST",body=json.dumps(self.data), headers=self.headers, callback=self.parse,
+            yield Request(self.url, method="POST", body=json.dumps(self.data), headers=self.headers,
+                          callback=self.parse,
                           meta={'key': key, 'page': page}, dont_filter=True)
 
     def parse(self, response):
@@ -83,13 +84,16 @@ class PeopleSpider(scrapy.Spider):
                               meta={'title_id': item['title_id'], 'item': item})
 
             # self.db2.exec_('insert into people_url VALUES (%s)' % response.url)
-            # key = response.meta['key']
-            # page = response.meta['page'] + 1
-            # self.data['key'] = key
-            # self.data['page'] = page
-            # yield Request(self.url, body=json.dumps(self.data), method='POST', headers=self.headers,
-            #               callback=self.parse,
-            #               meta={'key': key, 'page': page}, )
+            key = response.meta['key']
+
+            sql = f"select `page` from people_data where `key`='{key}'"
+            page = self.db2.query(sql)[0][0]
+            page = page + 1
+            self.data['key'] = key
+            self.data['page'] = page
+            yield Request(self.url, body=json.dumps(self.data), method='POST', headers=self.headers,
+                          callback=self.parse,
+                          meta={'key': key, 'page': page}, )
 
     def parse_text(self, response):
 
