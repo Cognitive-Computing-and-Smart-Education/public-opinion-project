@@ -27,7 +27,7 @@ class TitleItem(Item):
     # item['originalName'] = originalName
     # item['title'] = title
     # item['upload_time'] = upload_time
-    textitem = Field()
+    sentiment = Field()
 
 
 class TextItem(Item):

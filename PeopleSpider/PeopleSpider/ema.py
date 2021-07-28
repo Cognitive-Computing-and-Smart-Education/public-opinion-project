@@ -42,4 +42,4 @@ def ema(text):
 if __name__ == '__main__':
     # 语言文本
     text = "汉皇重色思倾国，御宇多年求不得。杨家有女初长成，养在深闺人未识。天生丽质难自弃，一朝选在君王侧。"
-    ema(text)
+    print(ema(text))

@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 import scrapy
 import json
-from scrapy import Request, FormRequest,Spider
+from scrapy import Request, FormRequest, Spider
 from PeopleSpider.items import *
 from lxml.etree import HTML
-from PeopleSpider import db
+from PeopleSpider.db import db
 from pymysql.converters import escape_string
 import re
 
@@ -20,10 +20,12 @@ class PeopleSpider(Spider):
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) '
                       'Chrome/68.0.3440.75 Safari/537.36',
     }
+    db = db(db="weibo")
 
     def start_requests(self):
+
         self.stat_sql = "select `title_id`,`url` from people_news where `url` like '%%people.com.cn%%' and `text` is NULL order by `title_id`  ;"
-        self.query = db.query(self.stat_sql)
+        self.query = self.db.query(self.stat_sql)
         # url = 'http://sd.people.com.cn/n2/2021/0720/c386784-34829035.html'
         # url = 'http://gx.people.com.cn/n2/2021/0713/c390645-34817944.html'
         if self.query:
@@ -31,7 +33,8 @@ class PeopleSpider(Spider):
                 title_id = i[0]
                 url = i[1]
                 # print(title_id)
-                yield Request(url, headers=self.headers, callback=self.parse, meta={'title_id': title_id},dont_filter=True )
+                yield Request(url, headers=self.headers, callback=self.parse, meta={'title_id': title_id},
+                              dont_filter=True)
 
     def parse(self, response):
 

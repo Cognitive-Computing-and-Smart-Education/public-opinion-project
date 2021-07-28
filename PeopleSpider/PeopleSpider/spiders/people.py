@@ -8,11 +8,12 @@ from PeopleSpider.db import db
 from pymysql.converters import escape_string
 import time
 from fake_useragent import UserAgent
+from PeopleSpider import ema
 
 
 class PeopleSpider(scrapy.Spider):
     name = 'people'
-    allowed_domains = ['search.people.cn']
+    allowed_domains = ['people.cn', ]
     url = 'http://search.people.cn/api-search/elasticSearch/search'
     keys = ['教育', '教学', '体育教育', '智慧教育', '科技', '体育', ] + ['国际教育', '特殊教育', '学科竞赛', '职业教育', 'K12', "婴儿教育", "幼儿教育"] + [
         '艺术培训', '远程教育', '线下教育', 'steam教育', '应试教育', '中考', '高考', '课外辅导', '科普教育', '海外教育', '爱国教育', ]
@@ -77,26 +78,30 @@ class PeopleSpider(scrapy.Spider):
                 ts = int(info.get("inputTime")) // 1000
 
                 item['upload_time'] = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(ts))
+                item['sentiment'] = None
+                sentimet = ema.ema(item['title'])
+                if sentimet['desc'] == 'success':
+                    item['sentiment'] = sentimet["data"]['sentiment']
 
                 yield item
 
-                yield Request(url=item['url'], headers=self.headers, callback=self.parse_text,
-                              meta={'title_id': item['title_id'], 'item': item})
+                if 'people.com.cn' in item['url']:
+                    yield Request(url=item['url'], headers=self.headers, callback=self.parse_text,
+                                  meta={'title_id': item['title_id'], 'item': item}, dont_filter=True)
 
-            # self.db2.exec_('insert into people_url VALUES (%s)' % response.url)
-            key = response.meta['key']
+            # self.db2.exec_("insert into people_url VALUES ('%s');" % item['url'])
 
-            sql = f"select `page` from people_data where `key`='{key}'"
-            page = self.db2.query(sql)[0][0]
-            page = page + 1
-            self.data['key'] = key
-            self.data['page'] = page
-            yield Request(self.url, body=json.dumps(self.data), method='POST', headers=self.headers,
-                          callback=self.parse,
-                          meta={'key': key, 'page': page}, )
+            # key = response.meta['key']
+            # sql = f"select `page` from people_data where `key`='{key}'"
+            # page = int(self.db2.query(sql)[0][0])
+            # page = page + 1
+            # self.data['key'] = key
+            # self.data['page'] = page
+            # yield Request(self.url, body=json.dumps(self.data), method='POST', headers=self.headers,
+            #               callback=self.parse,
+            #               meta={'key': key, 'page': page}, )
 
     def parse_text(self, response):
-
         # 文本内容
         text = response.xpath("//p/text()").extract()
         text = ["".join(i.split()) for i in text]
