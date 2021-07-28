@@ -89,17 +89,18 @@ class PeopleSpider(scrapy.Spider):
                     yield Request(url=item['url'], headers=self.headers, callback=self.parse_text,
                                   meta={'title_id': item['title_id'], 'item': item}, dont_filter=True)
 
-            # self.db2.exec_("insert into people_url VALUES ('%s');" % item['url'])
+            key = response.meta['key']
+            sql = f"select `page` from people_data where `key`='{key}'"
+            page = int(self.db2.query(sql)[0][0])
+            page = page + 1
 
-            # key = response.meta['key']
-            # sql = f"select `page` from people_data where `key`='{key}'"
-            # page = int(self.db2.query(sql)[0][0])
-            # page = page + 1
-            # self.data['key'] = key
-            # self.data['page'] = page
-            # yield Request(self.url, body=json.dumps(self.data), method='POST', headers=self.headers,
-            #               callback=self.parse,
-            #               meta={'key': key, 'page': page}, )
+            self.db2.exec_(f"update people_url set `page`={page}")
+
+            self.data['key'] = key
+            self.data['page'] = page
+            yield Request(self.url, body=json.dumps(self.data), method='POST', headers=self.headers,
+                          callback=self.parse,
+                          meta={'key': key, 'page': page}, )
 
     def parse_text(self, response):
         # 文本内容
