@@ -11,13 +11,13 @@ from PeopleSpider import db
 class TitlePipeline(object):
     def process_item(self, item, spider):
         if isinstance(item, TitleItem):
-            sql = f"""insert into people_news(`title_id`,`originalName`,`title`,`url`,`key`,`upload_time`) values ({item['title_id']},'{item['originalName']}','{item['title']}','{item['url']}','{item['key']}','{item['upload_time']}');"""
+            sql = f"""insert into test(`title_id`,`originalName`,`title`,`url`,`key`,`upload_time`) values ({item['title_id']},'{item['originalName']}','{item['title']}','{item['url']}','{item['key']}','{item['upload_time']}');"""
             db.exec_(sql)
             # print(sql)
             print(item)
 
         if isinstance(item, TextItem):
-            sql = f"update people_news set `text`='{item['text']}' where `title_id`='{item['title_id']}'"
+            sql = f"update test set `text`='{item['text']}' where `title_id`='{item['title_id']}'"
             db.exec_(sql)
             print(item)
             # print(sql)

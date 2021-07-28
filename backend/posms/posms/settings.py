@@ -85,8 +85,8 @@ DATABASES = {
         'NAME': 'weibo',  # 数据库名
         'USER': 'root',  # 用户名
         'PASSWORD': '123456',  # 密码
-        'HOST': '13bfc66f81062088.natapp.cc',  # 数据库地址
-        'PORT': '8888'  # 链接数据端口
+        'HOST': '172.18.40.39',  # 数据库地址
+        'PORT': '3306'  # 链接数据端口
     }
 }
 

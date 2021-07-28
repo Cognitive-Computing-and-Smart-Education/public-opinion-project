@@ -7,6 +7,9 @@ from lxml.etree import HTML
 from PeopleSpider import db
 from pymysql.converters import escape_string
 import time
+from fake_useragent import UserAgent
+
+ua = UserAgent()
 
 
 class PeopleSpider(scrapy.Spider):
@@ -16,7 +19,7 @@ class PeopleSpider(scrapy.Spider):
     keys = ['教育', '教学', '体育教育', '智慧教育', '科技', '体育', ] + ['国际教育', '特殊教育', '学科竞赛', '职业教育', 'K12', "婴儿教育", "幼儿教育"] + [
         '艺术培训', '远程教育', '线下教育', 'steam教育', '应试教育', '中考', '高考', '课外辅导', '科普教育', '海外教育', '爱国教育', ]
 
-    # keys = ['国际教育', '特殊教育', '学科竞赛', '职业教育', 'K12', "婴儿教育", "幼儿教育"]
+    keys = ['国际教育', '特殊教育', '学科竞赛', '职业教育', 'K12', "婴儿教育", "幼儿教育"]
 
     # keys = ['艺术培训', '远程教育', '线下教育', 'steam教育', '应试教育', '中考', '高考', '课外辅导', '科普教育', '海外教育', '爱国教育', ]
 
@@ -37,17 +40,21 @@ class PeopleSpider(scrapy.Spider):
         "startTime": 0,
         "type": 1,
     }
+    proxy = 'http://127.0.0.1:10809/'
 
     SQL = "CREATE TABLE IF NOT EXISTS `people_news`  (`title_id` bigint NOT NULL,`originalName` varchar(255) ,`title` varchar(255) ,`url` varchar(255) ,`key` varchar(255) ,`text` longtext,`upload_time` datetime,PRIMARY KEY (`title_id`) USING BTREE);"
     db.exec_(SQL)
 
     def start_requests(self):
-        page = 40
+        # import os
+        # os.environ["HTTP_PROXY"] = "http://127.0.0.1:10809"
+        page = 100
         for key in self.keys:
             self.data['key'] = key
             self.data['page'] = page
+            self.headers['Referer'] = f'http://search.people.cn/s/?keyword={key}&st=0&_=1627454684554'
             yield Request(self.url, body=json.dumps(self.data), headers=self.headers, callback=self.parse,
-                          meta={'key': key, 'page': page},)
+                          meta={'key': key, 'page': page}, )
 
     def parse(self, response):
 
@@ -73,15 +80,15 @@ class PeopleSpider(scrapy.Spider):
 
                 yield item
                 yield Request(url=item['url'], headers=self.headers, callback=self.parse_text,
-                              meta={'title_id': item['title_id']})
+                              meta={'title_id': item['title_id'], 'item': item})
 
-            key = response.meta['key']
-            page = response.meta['page'] + 1
-            self.data['key'] = key
-            self.data['page'] = page
-            yield Request(self.url, body=json.dumps(self.data), method='POST', headers=self.headers,
-                          callback=self.parse,
-                          meta={'key': key, 'page': page}, )
+            # key = response.meta['key']
+            # page = response.meta['page'] + 1
+            # self.data['key'] = key
+            # self.data['page'] = page
+            # yield Request(self.url, body=json.dumps(self.data), method='POST', headers=self.headers,
+            #               callback=self.parse,
+            #               meta={'key': key, 'page': page}, )
         else:
             return
 
