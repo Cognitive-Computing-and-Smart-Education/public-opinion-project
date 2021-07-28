@@ -23,6 +23,11 @@ class TitleItem(Item):
     title = Field()
     url = Field()
     upload_time = Field()
+    textitem = Field()
+    # item['originalName'] = originalName
+    # item['title'] = title
+    # item['upload_time'] = upload_time
+    textitem = Field()
 
 
 class TextItem(Item):
