@@ -78,14 +78,16 @@ class PeopleSpider(scrapy.Spider):
                 ts = int(info.get("inputTime")) // 1000
 
                 item['upload_time'] = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(ts))
-                item['sentiment'] = None
+                item['sentiment'] = ''
                 sentimet = ema.ema(item['title'])
                 if sentimet['desc'] == 'success':
                     item['sentiment'] = sentimet["data"]['sentiment']
 
                 yield item
 
-                if 'people.com.cn' in item['url']:
+                if not self.db1.query(
+                        f"select `url` from people_news where `url`='{item['url']}'") and 'people.com.cn' in item[
+                    'url']:
                     yield Request(url=item['url'], headers=self.headers, callback=self.parse_text,
                                   meta={'title_id': item['title_id'], 'item': item}, dont_filter=True)
 

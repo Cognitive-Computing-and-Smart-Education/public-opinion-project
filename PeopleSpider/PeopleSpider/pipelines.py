@@ -14,9 +14,11 @@ class TitlePipeline(object):
     def process_item(self, item, spider):
 
         if isinstance(item, TitleItem):
-            sql = f"""insert into people_news(`title_id`,`originalName`,`title`,`url`,`key`,`upload_time`,`sentiment`) values ({item['title_id']},'{item['originalName']}','{item['title']}','{item['url']}','{item['key']}','{item['upload_time']}',{item['sentiment']});"""
+            sql = f"""insert into people_news(`title_id`,`originalName`,`title`,`url`,`key`,`upload_time`) values ({item['title_id']},'{item['originalName']}','{item['title']}','{item['url']}','{item['key']}','{item['upload_time']}');"""
+            print(sql)
             self.db.exec_(sql)
-            # print(sql)
+            if item["sentiment"]:
+                self.db.exec_("update people_news set `sentiment`='item['sentiment']'")
             return item
 
         if isinstance(item, TextItem):
