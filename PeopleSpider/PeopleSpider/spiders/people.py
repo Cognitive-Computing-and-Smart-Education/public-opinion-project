@@ -4,19 +4,19 @@ import json
 from scrapy import Request, FormRequest
 from PeopleSpider.items import *
 from lxml.etree import HTML
-from PeopleSpider import db
+from PeopleSpider.db import db
 from pymysql.converters import escape_string
 import time
+from fake_useragent import UserAgent
+from PeopleSpider import ema
 
 
 class PeopleSpider(scrapy.Spider):
     name = 'people'
-    allowed_domains = ['search.people.cn']
+    allowed_domains = ['people.cn', ]
     url = 'http://search.people.cn/api-search/elasticSearch/search'
     keys = ['教育', '教学', '体育教育', '智慧教育', '科技', '体育', ] + ['国际教育', '特殊教育', '学科竞赛', '职业教育', 'K12', "婴儿教育", "幼儿教育"] + [
         '艺术培训', '远程教育', '线下教育', 'steam教育', '应试教育', '中考', '高考', '课外辅导', '科普教育', '海外教育', '爱国教育', ]
-
-    # keys = ['国际教育', '特殊教育', '学科竞赛', '职业教育', 'K12', "婴儿教育", "幼儿教育"]
 
     # keys = ['艺术培训', '远程教育', '线下教育', 'steam教育', '应试教育', '中考', '高考', '课外辅导', '科普教育', '海外教育', '爱国教育', ]
 
@@ -37,17 +37,25 @@ class PeopleSpider(scrapy.Spider):
         "startTime": 0,
         "type": 1,
     }
-
+    db1 = db(db="weibo")
     SQL = "CREATE TABLE IF NOT EXISTS `people_news`  (`title_id` bigint NOT NULL,`originalName` varchar(255) ,`title` varchar(255) ,`url` varchar(255) ,`key` varchar(255) ,`text` longtext,`upload_time` datetime,PRIMARY KEY (`title_id`) USING BTREE);"
-    db.exec_(SQL)
+    db1.exec_(SQL)
+
+    db2 = db(db="redis")
 
     def start_requests(self):
-        page = 40
         for key in self.keys:
+            sql = f"select `page` from people_data where `key`='{key}'"
+            if not self.db2.query(sql):
+                self.db2.exec_(f"insert into people_data VALUES ('{key}',1)")
+            page = self.db2.query(sql)[0][0]
+
             self.data['key'] = key
             self.data['page'] = page
-            yield Request(self.url, body=json.dumps(self.data), headers=self.headers, callback=self.parse,
-                          meta={'key': key, 'page': page},)
+            self.headers['Referer'] = f'http://search.people.cn/s/?keyword={key}&st=0&_=1627454684554'
+            yield Request(self.url, method="POST", body=json.dumps(self.data), headers=self.headers,
+                          callback=self.parse,
+                          meta={'key': key, 'page': page}, dont_filter=True)
 
     def parse(self, response):
 
@@ -70,23 +78,33 @@ class PeopleSpider(scrapy.Spider):
                 ts = int(info.get("inputTime")) // 1000
 
                 item['upload_time'] = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(ts))
+                item['sentiment'] = ''
+                sentimet = ema.ema(item['title'])
+                if sentimet['desc'] == 'success':
+                    item['sentiment'] = sentimet["data"]['sentiment']
 
                 yield item
-                yield Request(url=item['url'], headers=self.headers, callback=self.parse_text,
-                              meta={'title_id': item['title_id']})
+
+                if not self.db1.query(
+                        f"select `url` from people_news where `url`='{item['url']}'") and 'people.com.cn' in item[
+                    'url']:
+                    yield Request(url=item['url'], headers=self.headers, callback=self.parse_text,
+                                  meta={'title_id': item['title_id'], 'item': item}, dont_filter=True)
 
             key = response.meta['key']
+            # sql = f"select `page` from people_data where `key`='{key}'"
+            # page = int(self.db2.query(sql)[0][0])
             page = response.meta['page'] + 1
+
+            self.db2.exec_(f"update people_data set `page`={page} where `key`='{key}'")
+
             self.data['key'] = key
             self.data['page'] = page
             yield Request(self.url, body=json.dumps(self.data), method='POST', headers=self.headers,
                           callback=self.parse,
                           meta={'key': key, 'page': page}, )
-        else:
-            return
 
     def parse_text(self, response):
-
         # 文本内容
         text = response.xpath("//p/text()").extract()
         text = ["".join(i.split()) for i in text]
@@ -101,3 +119,5 @@ class PeopleSpider(scrapy.Spider):
         textitem['text'] = escape_string(text)
 
         yield textitem
+
+        # self.db2.exec_('insert into people_url VALUES (%s)' % response.url)

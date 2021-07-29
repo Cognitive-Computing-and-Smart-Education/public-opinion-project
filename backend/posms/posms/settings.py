@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-&nc^_0*vu6+zfruddkk%!08#6-$hg@q7u*v8sx@szr!=a_1%r@
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -85,8 +85,8 @@ DATABASES = {
         'NAME': 'weibo',  # 数据库名
         'USER': 'root',  # 用户名
         'PASSWORD': '123456',  # 密码
-        'HOST': '13bfc66f81062088.natapp.cc',  # 数据库地址
-        'PORT': '8888'  # 链接数据端口
+        'HOST': '172.18.40.39',  # 数据库地址
+        'PORT': '3306'  # 链接数据端口
     }
 }
 
