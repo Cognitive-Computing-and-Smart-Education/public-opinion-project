@@ -22,9 +22,10 @@
         height: 100%;
         background-color: #0e0f3c;
         color: #fff;
-        font-size: 36px;
+        font-size: 32px;
+        font-weight: bold;
         text-align: center;
-        line-height: 80px;
+        line-height: 68px;
         background-image: url("../assets/img/current-title.png");
         background-repeat: no-repeat;
         background-size: 100% 100%;

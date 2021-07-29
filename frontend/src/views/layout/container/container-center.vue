@@ -73,15 +73,23 @@
                         bottom: 15,
                         containLabel: true
                     },
-                    rader: {
-
-                    },
                     xAxis: {
                         type: 'category',
-                        data: ['婴幼儿教育', 'k12教育', '职业教育', '学科竞赛', '特殊教育', '体育经济', '国际教育','智慧教育']
+                        data: ['婴幼儿教育', 'k12教育', '职业教育', '学科竞赛', '特殊教育', '体育经济', '国际教育','智慧教育'],
+                        axisLabel: {
+                            color: '#fff'
+                        }
                     },
                     yAxis: {
-                        type: 'value'
+                        type: 'value',
+                        splitLine: {
+                            lineStyle: {
+                                color: '#142852'
+                            }
+                        },
+                        axisLabel: {
+                            color: '#fff'
+                        }
                     },
                     series: [{
                         data: [120, 200, 150, 80, 70, 110, 130,142],
