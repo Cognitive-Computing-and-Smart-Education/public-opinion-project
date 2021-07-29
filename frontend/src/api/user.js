@@ -9,3 +9,13 @@ export const getUserInfo = ({userId}) => {
         }
     })
 }
+
+export const getCeshi = ({keyword}) => {
+    return axios.request({
+        url: '/get_news/',
+        method: "post",
+        data: {
+            Keyword: keyword
+        }
+    })
+}

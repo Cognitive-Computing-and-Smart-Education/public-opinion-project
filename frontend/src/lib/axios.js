@@ -4,14 +4,14 @@ import {stripObject} from './utils'
 
 class HttpRequest {
     constructor(options) {
-        this.baseUrl = 'http://localhost:8091'
+        this.baseUrl = '/api'
         this.queue = {}
     }
     getInsideConfig() {
         const config = {
             baseURL: this.baseUrl,
             headers: {
-
+                // ContentType: 'application/json'
             }
 
         }
@@ -51,10 +51,12 @@ class HttpRequest {
             return Promise.reject(error)
         })
         instance.interceptors.response.use(res => {
-            console.log(res)
+            debugger
+            // console.log(res)
             return res
         },error => {
-            console.log('error',error)
+            debugger
+            // console.log('error',error)
             Message({
                 message: error.message,
                 type: 'error',

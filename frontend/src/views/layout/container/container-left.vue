@@ -51,7 +51,7 @@
 </template>
 
 <script>
-    import { getUserInfo } from '@/api/user'
+    import { getCeshi } from '@/api/user'
 
     export default {
         name: "container-left",
@@ -146,7 +146,7 @@
         },
         methods: {
             geiMessage() {
-                getUserInfo({ userId: 23 }).then(res => {
+                getCeshi({ keyword: '教育 编程' }).then(res => {
                     console.log(res)
                 })
             },
