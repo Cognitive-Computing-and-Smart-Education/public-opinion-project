@@ -21,4 +21,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('get_news/',search),#获取指定文章列表
     path('get_news_num/',get_num),#获取数据量
+    path('get_area_news_tre/',get_tre),#获取地区舆情趋势
 ]
