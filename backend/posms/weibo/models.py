@@ -213,3 +213,19 @@ class Wangyiedu(models.Model):
     class Meta:
         managed = False
         db_table = 'wangyiedu'
+
+
+class Xinhuanews(models.Model):
+    title_id = models.BigIntegerField(primary_key=True)
+    title = models.CharField(max_length=255, blank=True, null=True)
+    keyword = models.CharField(max_length=255, blank=True, null=True)
+    pubtime = models.DateTimeField(blank=True, null=True)
+    sitename = models.CharField(max_length=255, blank=True, null=True)
+    url = models.CharField(max_length=255, blank=True, null=True)
+    key = models.CharField(max_length=255, blank=True, null=True)
+    text = models.TextField(blank=True, null=True)
+    sentiment = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'xinhuanews'
