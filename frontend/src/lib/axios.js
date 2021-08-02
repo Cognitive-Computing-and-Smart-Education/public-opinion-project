@@ -27,18 +27,18 @@ class HttpRequest {
             }
 
             // 添加全局loading...
-            // if(config.loading === undefined || config.loading){//全局遮罩层处理
-            //     if(!instance.loading){
-            //         instance.loading = {total:1,obj:
-            //                 Loading.service({
-            //                     fullscreen: true,lock: true,
-            //                     background: 'rgba(0, 0, 0, 0.05)'
-            //                 })}
-            //     }else{
-            //         instance.loading.total++
-            //     }
-            //     config.loading = true
-            // }
+            if(config.loading === undefined || config.loading){//全局遮罩层处理
+                if(!instance.loading){
+                    instance.loading = {total:1,obj:
+                            Loading.service({
+                                fullscreen: true,lock: true,
+                                background: 'rgba(0, 0, 0, 0.05)'
+                            })}
+                }else{
+                    instance.loading.total++
+                }
+                config.loading = true
+            }
 
             return config
 
@@ -51,11 +51,29 @@ class HttpRequest {
             return Promise.reject(error)
         })
         instance.interceptors.response.use(res => {
-            debugger
+
+            if(res.config.loading){
+                if(instance.loading.total>1){//遮罩层处理
+                    instance.loading.total--
+                }else{
+                    instance.loading.obj.close()
+                    instance.loading = undefined
+                }
+            }
             // console.log(res)
             return res
         },error => {
-            debugger
+            if(!error.config || error.config.loading){
+                if(instance.loading){
+                    if(instance.loading.total>1){//遮罩层处理
+                        instance.loading.total--
+                    }else{
+                        instance.loading.obj.close()
+                        instance.loading = undefined
+                    }
+                }
+
+            }
             // console.log('error',error)
             Message({
                 message: error.message,

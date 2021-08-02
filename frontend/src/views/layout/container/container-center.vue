@@ -44,6 +44,8 @@
 
 <script>
     import '../../../../node_modules/echarts/map/js/china.js'
+    import { getNewsNum, getNewsMap, getAreaNewsIndustry } from '@/api/Home'
+    import { mapGetters, mapMutations } from "vuex";
 
     export default {
         name: "container-center",
@@ -53,8 +55,19 @@
                 cumulative: '',
                 todayMonitor: '',
                 sensitive: '',
-                informationSource: ''
+                informationSource: '',
+                mapData: []
             };
+        },
+        computed: {
+            ...mapGetters(["homeAreaName"]),
+        },
+        watch: {
+            homeAreaName() {
+                this.getNowTime();
+                this.getMonitorData(this.homeAreaName);
+                this.getIndustryVoice(this.homeAreaName);
+            }
         },
         mounted () {
             this.init();
@@ -63,64 +76,12 @@
             this.getIndustryVoice();
         },
         methods: {
-            getIndustryVoice() {
-                let myChart = this.$echarts.init(document.getElementById('industryVoiceChart'))
-                myChart.setOption({
-                    grid: {
-                        right: 15,
-                        left: 15,
-                        top: 15,
-                        bottom: 15,
-                        containLabel: true
-                    },
-                    xAxis: {
-                        type: 'category',
-                        data: ['婴幼儿教育', 'k12教育', '职业教育', '学科竞赛', '特殊教育', '体育经济', '国际教育','智慧教育'],
-                        axisLabel: {
-                            color: '#fff'
-                        }
-                    },
-                    yAxis: {
-                        type: 'value',
-                        splitLine: {
-                            lineStyle: {
-                                color: '#142852'
-                            }
-                        },
-                        axisLabel: {
-                            color: '#fff'
-                        }
-                    },
-                    series: [{
-                        data: [120, 200, 150, 80, 70, 110, 130,142],
-                        type: 'bar',
-                        barWidth: 30
-                    }]
-                })
-            },
-            getMonitorData() {
-                this.cumulative = '2345'
-                this.todayMonitor = '1234'
-                this.sensitive = '181'
-                this.informationSource = '131'
-            },
-            timestampToTime(data) {
-                let dt = new Date()
-                let yyyy = dt.getFullYear()
-                let MM = (dt.getMonth() + 1).toString().padStart(2, '0')
-                let dd = dt.getDate().toString().padStart(2, '0')
-                let h = dt.getHours().toString().padStart(2, '0')
-                let m = dt.getMinutes().toString().padStart(2, '0')
-                let s = dt.getSeconds().toString().padStart(2, '0')
-                return MM + '月' + dd + '日 ' + h + ':' + m
-            },
-            getNowTime() {
-                let aData = new Date();
-
-                this.currentTime = this.timestampToTime(aData)
-            },
-            init () {
-                console.log(this.userJson)
+            ...mapMutations(["changeHomeAreaName"]),
+            // async
+            async init () {
+                let _that = this
+                let { data } = await getNewsMap();
+                this.mapData = data.date;
                 let myChart = this.$echarts.init(document.getElementById('container')); //这里是为了获得容器所在位置
                 // window.onresize = myChart.resize;
                 myChart.setOption({ // 进行相关配置
@@ -129,7 +90,7 @@
                     dataRange: {
                         show: false,
                         min: 0,
-                        max: 1000,
+                        max: 100,
                         text: ['High', 'Low'],
                         realtime: true,
                         calculable: true,
@@ -168,29 +129,88 @@
                             name: '启动次数', // 浮动框的标题
                             type: 'map',
                             geoIndex: 0,
-                            data: [{
-                                "name": "北京",
-                                "value": 599
-                            }, {
-                                "name": "上海",
-                                "value": 142
-                            }, {
-                                "name": "黑龙江",
-                                "value": 44
-                            }, {
-                                "name": "深圳",
-                                "value": 92
-                            }, {
-                                "name": "湖北",
-                                "value": 810
-                            }, {
-                                "name": "四川",
-                                "value": 453
-                            }]
+                            data: this.mapData
                         }
                     ]
                 })
-            }
+
+                myChart.on('click', function (param) {
+                    _that.changeHomeAreaName(param.data.name);
+                });
+            },
+            getIndustryVoice(Area_name) {
+                getAreaNewsIndustry({ Area_name: Area_name || '' }).then(res => {
+                    let xAxisData = []
+                    let data = []
+                    for(let i in res.data.date) {
+                        if(i < 7) {
+                            let obj = res.data.date[i]
+                            xAxisData.push(obj.name)
+                            data.push(obj.value)
+                        }
+                    }
+                    console.log(xAxisData)
+                    let myChart = this.$echarts.init(document.getElementById('industryVoiceChart'))
+                    myChart.setOption({
+                        grid: {
+                            right: 15,
+                            left: 15,
+                            top: 15,
+                            bottom: 15,
+                            containLabel: true
+                        },
+                        xAxis: {
+                            type: 'category',
+                            data: xAxisData,
+                            axisLabel: {
+                                color: '#fff'
+                            }
+                        },
+                        yAxis: {
+                            type: 'value',
+                            splitLine: {
+                                lineStyle: {
+                                    color: '#142852'
+                                }
+                            },
+                            axisLabel: {
+                                color: '#fff'
+                            }
+                        },
+                        series: [{
+                            data: data,
+                            type: 'bar',
+                            barWidth: 30
+                        }]
+                    })
+                })
+
+            },
+            getMonitorData(Area_name) {
+                getNewsNum({ Area_name: Area_name || '' }).then(res => {
+                    this.cumulative = res.data.Total_num
+                    this.todayMonitor = res.data.Today_num
+                    this.sensitive = res.data.Sensitive_num
+                    this.informationSource = res.data.Source_num
+                })
+
+            },
+            timestampToTime(data) {
+                let dt = new Date()
+                let yyyy = dt.getFullYear()
+                let MM = (dt.getMonth() + 1).toString().padStart(2, '0')
+                let dd = dt.getDate().toString().padStart(2, '0')
+                let h = dt.getHours().toString().padStart(2, '0')
+                let m = dt.getMinutes().toString().padStart(2, '0')
+                let s = dt.getSeconds().toString().padStart(2, '0')
+                return MM + '月' + dd + '日 ' + h + ':' + m
+            },
+            getNowTime() {
+                let aData = new Date();
+
+                this.currentTime = this.timestampToTime(aData)
+            },
+
         }
     }
 </script>

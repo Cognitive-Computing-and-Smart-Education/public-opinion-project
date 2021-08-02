@@ -82,7 +82,7 @@ export default {
                     type: "wordCloud",
 
                     // 用来调整词之间的距离
-                    gridSize: 15,
+                    gridSize: 30,
                     // 用来调整字的大小范围
                     // Text size range which the value in data will be mapped to.
                     // Default to have minimum 12px and maximum 60px size.
