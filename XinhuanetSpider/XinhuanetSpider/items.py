@@ -3,23 +3,31 @@
 # See documentation in:
 # https://docs.scrapy.org/en/latest/topics/items.html
 
-import scrapy
+
 from scrapy import Item, Field
 
 
-class XinhuanetspiderItem(scrapy.Item):
+class XinhuanetspiderItem(Item):
     # define the fields for your item here like:
     # name = scrapy.Field()
     pass
 
 
-class TitleItem(scrapy.Item):
+class TitleItem(Item):
     # define the fields for your item here like:
     # name = scrapy.Field()
-    contentId = Field()
+    title_id = Field()
     title = Field()
     keyword = Field()
     key = Field()
     pubtime = Field()
     sitename = Field()
     url = Field()
+    sentiment = Field()
+
+
+class TextItem(Item):
+    # define the fields for your item here like:
+    # name = scrapy.Field()
+    text = Field()
+    title_id = Field()
