@@ -38,7 +38,7 @@ class PeopleSpider(Spider):
             sql = f"select `page` from keji_data where `key`='{key}'"
 
             if not self.db2.query(sql):
-                self.db2.exec_(f"insert into keji_data VALUES ('{key}',1)")
+                self.db2.exec_(f"insert into keji_data VALUES ('{key}',0)")
 
             page = self.db2.query(sql)[0][0]
 
@@ -51,7 +51,7 @@ class PeopleSpider(Spider):
                           meta={'key': key, 'page': page}, dont_filter=True)
 
     def parse(self, response):
-        print(response.xpath("""//dic[@id=1]/""").extract())
+        print(response.xpath("//div[@id=1]/").extract())
 
     def p(self, response):
 
