@@ -8,7 +8,22 @@
 from scrapy import Item, Field
 
 
-class Item(Item):
+class TitleItem(Item):
     # define the fields for your item here like:
     # name = scrapy.Field()
-    pass
+
+    target = Field()
+    title = Field()
+    url = Field()
+    originalName = Field()
+    upload_time = Field()
+    sentiment = Field()
+    key = Field()
+
+
+class TextItem(Item):
+    # define the fields for your item here like:
+    # name = scrapy.Field()
+
+    url = Field()
+    text = Field()
