@@ -3,6 +3,7 @@ from weibo.models import Comment, Title, User,PeopleNews,Wangyiedu,Xinhuanews
 import json
 from django.http import JsonResponse
 from django.db.models import Q,F
+from django.db import connection
 import traceback
 import datetime
 from ema import ema
@@ -28,11 +29,11 @@ def s1(num):
         return 5
     elif num < 100:
         return 1
-    elif num>=100and num<1000:
+    elif num>=100 and num<1000:
         return 2
     elif num >= 1000 and num < 10000:
         return 3
-    elif num >= 10000and num < 50000:
+    elif num >= 10000 and num < 50000:
         return 4
 
 
@@ -42,11 +43,11 @@ def s3(num):
         return 5
     elif num < 1000:
         return 1
-    elif num>=1000and num<5000:
+    elif num>=1000 and num<5000:
         return 2
     elif num >= 5000 and num < 20000:
         return 3
-    elif num >= 20000and num < 100000:
+    elif num >= 20000 and num < 100000:
         return 4
 
 
@@ -57,11 +58,11 @@ def s4(num):
         return 5
     elif num < 50:
         return 1
-    elif num>=50and num<100:
+    elif num>=50 and num<100:
         return 2
     elif num >= 100 and num < 500:
         return 3
-    elif num >= 500and num < 1000:
+    elif num >= 500 and num < 1000:
         return 4
 #
 
@@ -71,11 +72,11 @@ def s5(num):
         return 5
     elif num < 50:
         return 1
-    elif num>=50and num<100:
+    elif num>=50 and num<100:
         return 2
     elif num >= 100 and num < 500:
         return 3
-    elif num >= 500and num < 1000:
+    elif num >= 500 and num < 1000:
         return 4
 #
 
@@ -86,11 +87,11 @@ def s6(num):
         return 5
     elif num < 0.05:
         return 1
-    elif num>=0.05and num<0.1:
+    elif num>=0.05 and num<0.1:
         return 2
     elif num >= 0.1 and num < 0.15:
         return 3
-    elif num >= 0.15and num < 0.2:
+    elif num >= 0.15 and num < 0.2:
         return 4
 #
 
@@ -121,7 +122,7 @@ def search(request):#获取指定文章列表
         return JsonResponse({'code': 1,  'msg': '请求参数没拿到'})
     try:
         #取微博的查询结果
-        qs_weibo = Title.objects.values('title_id', 'title', 'openurl','time')  # .order_by('-title_id')
+        qs_weibo = Title.objects.values('title_id', 'title', 'url','time')  # .order_by('-title_id')
         if keywords:
             conditions = [Q(title__contains=one) for one in keywords.split(' ') if one]  # 所有查询的列表
             query = Q()
@@ -130,7 +131,7 @@ def search(request):#获取指定文章列表
             qs_weibo = qs_weibo.filter(query&Q(iscrawled=1))
         qs_list = list(qs_weibo)
         #取人民网的查询结果，人民网url字段取了别名和weibo保持一致
-        qs_people = PeopleNews.objects.annotate(openurl=F('url'),time=F('upload_time')).values('title_id', 'title', 'openurl','time')  
+        qs_people = PeopleNews.objects.values('title_id', 'title', 'url','time')  
         
         if keywords:
             conditions = [Q(title__contains=one) for one in keywords.split(' ') if one]  # 所有查询的列表
@@ -142,7 +143,7 @@ def search(request):#获取指定文章列表
         qs_list.extend(qs_list2)
 
          #取网易教育的查询结果，网易教育url字段取了别名和weibo保持一致
-        qs_wy = Wangyiedu.objects.annotate(openurl=F('url'),time=F('upload_time')).values('title_id', 'title', 'openurl','time')  
+        qs_wy = Wangyiedu.objects.values('title_id', 'title', 'url','time')  
         
         if keywords:
             conditions = [Q(title__contains=one) for one in keywords.split(' ') if one]  # 所有查询的列表
@@ -154,7 +155,7 @@ def search(request):#获取指定文章列表
         qs_list.extend(qs_list3)
 
          #取新华教育的查询结果，新华教育url字段取了别名和weibo保持一致
-        qs_xh = Xinhuanews.objects.annotate(openurl=F('url'),time=F('pubtime')).values('title_id', 'title', 'openurl','time')  
+        qs_xh = Xinhuanews.objects.values('title_id', 'title', 'url','time')  
         
         if keywords:
             conditions = [Q(title__contains=one) for one in keywords.split(' ') if one]  # 所有查询的列表
@@ -190,16 +191,16 @@ def get_num(request):  # 获取数据量
                 Today_num = Title.objects.filter(time__date=today).count()  # 日期为当天的数据总数
                 Sensitive_num = Title.objects.filter(sentiment=-1).count()  # 负面信息总量
                 #取人民网的查询结果
-                Total_num += PeopleNews.objects.annotate(openurl=F('url'),time=F('upload_time')).values().count()  # 全国文章总数
-                Today_num += PeopleNews.objects.annotate(openurl=F('url'),time=F('upload_time')).filter(time__date=today).count()  # 日期为当天的数据总数
+                Total_num += PeopleNews.objects.values().count()  # 全国文章总数
+                Today_num += PeopleNews.objects.filter(time__date=today).count()  # 日期为当天的数据总数
                 # Sensitive_num += PeopleNews.objects.annotate(openurl=F('url'),time=F('upload_time')).filter(sentiment=-1).count()  # 负面信息总量
                  #取网易教育的查询结果
-                Total_num += Wangyiedu.objects.annotate(openurl=F('url'),time=F('upload_time')).values().count()  # 全国文章总数
-                Today_num += Wangyiedu.objects.annotate(openurl=F('url'),time=F('upload_time')).filter(time__date=today).count()  # 日期为当天的数据总数
+                Total_num += Wangyiedu.objects.values().count()  # 全国文章总数
+                Today_num += Wangyiedu.objects.filter(time__date=today).count()  # 日期为当天的数据总数
                 # Sensitive_num += Wangyiedu.objects.annotate(openurl=F('url'),time=F('upload_time')).filter(sentiment=-1).count()  # 负面信息总量
                 #取新华网的查询结果
-                Total_num += Xinhuanews.objects.annotate(openurl=F('url'),time=F('pubtime')).values().count()  # 全国文章总数
-                Today_num += Xinhuanews.objects.annotate(openurl=F('url'),time=F('pubtime')).filter(time__date=today).count()  # 日期为当天的数据总数
+                Total_num += Xinhuanews.objects.values().count()  # 全国文章总数
+                Today_num += Xinhuanews.objects.filter(time__date=today).count()  # 日期为当天的数据总数
                 # Sensitive_num += Xinhuanews.objects.annotate(openurl=F('url'),time=F('pubtime'),title_id=F('contentid')).filter(sentiment=-1).count()  # 负面信息总量
 
                 Source_num = 4  # 爬取的信息源总数
@@ -216,38 +217,44 @@ def get_num(request):  # 获取数据量
     else:
         return JsonResponse({'code': 1, 'msg': '请求需携带type参数'})
 
-def get_tre(request):#获取半个月内的舆情趋势
+def get_tre(request):#获取一周内的舆情趋势
+    # import datetime
+    # starttime = datetime.datetime.now()
     request.params = json.loads(request.body)
     try:
        province = request.params['Area']
     except:
         return JsonResponse({'code': 1,  'msg': '请求参数没拿到'})
-    today = datetime.datetime.now()  # 获取当天的日期
+    today = datetime.datetime.today()  # 获取当天的日期
+    tomorrow = today +  datetime.timedelta(days=1)
     try:
         if province == '全国':
             tre_list = []
-            t_count =  Title.objects.filter(time__date=today.date()).count()#微博当天的发文量
-            t_count +=  PeopleNews.objects.annotate(openurl=F('url'),time=F('upload_time')).filter(time__date=today.date()).count()#人民网当天的发文量
-            t_count +=  Wangyiedu.objects.annotate(openurl=F('url'),time=F('upload_time')).filter(time__date=today.date()).count()#网易教育当天的发文量
-            t_count += Xinhuanews.objects.annotate(openurl=F('url'),time=F('pubtime')).filter(time__date=today.date()).count()#新华网当天的发文量
+            t_count =  Title.objects.filter(time__date=today.date()).only('title').count()#微博当天的发文量
+            print(connection.queries)
+            t_count +=  PeopleNews.objects.filter(time__date=today.date()).only('title').count()#人民网当天的发文量
+            t_count +=  Wangyiedu.objects.filter(time__date=today.date()).count()#网易教育当天的发文量
+            t_count += Xinhuanews.objects.filter(time__date=today.date()).count()#新华网当天的发文量
             tre_list.append({'time':today.date().strftime('%m-%d'),'news_num':t_count})
-            for time in range(1,7):#过去14天的发文量
+            for time in range(1,7):#过去7天的发文量
                 delta = datetime.timedelta(days=time)#相差天数
                 past_date = today-delta
                 past_date = past_date.date()
 
                 t_count =  Title.objects.filter(time__date=past_date).count()#
-                t_count +=  PeopleNews.objects.annotate(openurl=F('url'),time=F('upload_time')).filter(time__date=past_date).count()#人民网当天的发文量
-                t_count +=  Wangyiedu.objects.annotate(openurl=F('url'),time=F('upload_time')).filter(time__date=past_date).count()#网易教育当天的发文量
-                t_count +=  Xinhuanews.objects.annotate(openurl=F('url'),time=F('pubtime')).filter(time__date=past_date).count()#新华网当天的发文量
+                t_count +=  PeopleNews.objects.filter(time__date=past_date).count()#人民网当天的发文量
+                t_count +=  Wangyiedu.objects.filter(time__date=past_date).count()#网易教育当天的发文量
+                t_count +=  Xinhuanews.objects.filter(time__date=past_date).count()#新华网当天的发文量
 
                 tre_list.append({'time':past_date.strftime('%m-%d'),'news_num':t_count})
+            # endtime = datetime.datetime.now()
+            # print (endtime - starttime)
             return JsonResponse({'code': 0, 'Tre_list': tre_list})#返回半个月的舆情趋势
         elif province:#现在地区字段只有微博的数据有，所以别的平台没算
             tre_list = []
             t_count =  Title.objects.filter(time__date=today.date(),province=province).count()
             tre_list.append({'time':today.date().strftime('%m-%d'),'news_num':t_count})
-            for time in range(1,7):#过去14天的发文量
+            for time in range(1,7):#过去7天的发文量
                 delta = datetime.timedelta(days=time)#相差天数
                 past_date = today-delta
                 past_date = past_date.date()
@@ -320,7 +327,7 @@ def get_news_influence(request):#获取文章影响力
                          (date['pz']) * 0.2 + (date['like_num']) * 0.1 + (date['ycl']) * 0.1 + (
                          date['verifiedfans_count']) * 0.15
 
-            columns = ['openurl', 'key', 'iscrawled', 'uid', 'uname_x', 'read_num', 'forward_num', 'comment_num', 'like_num',
+            columns = ['url', 'key', 'iscrawled', 'uid', 'uname_x', 'read_num', 'forward_num', 'comment_num', 'like_num',
                        'comment_id', 'comment_times', 'sentiment', 'pz', 'uname_y',
                        'follow_count', 'followers_count', 'statuses_count', 'verified',
                        'fans_list_id', 'more_list_id', 'activefans_count',
