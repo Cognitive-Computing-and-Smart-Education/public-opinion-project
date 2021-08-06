@@ -219,8 +219,10 @@
                 getAreaNewsTre({ Area_name: Area_name || '' }).then(res => {
                     let time = []
                     let data = []
-                    for(let i in res.data.Tre_list) {
-                        let obj = res.data.Tre_list[i]
+                    let list = res.data.Tre_list
+                    let listData = list.reverse()
+                    for(let i in listData) {
+                        let obj = listData[i]
                         time.push(obj.time)
                         data.push(obj.news_num)
                     }

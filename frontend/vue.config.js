@@ -18,7 +18,7 @@ module.exports = {
         // proxy: 'http://localhost:8091'
         proxy: {
             '/api': {
-                // target: 'http://172.18.40.39:8888',
+                // target: 'http://172.18.40.39:800',
                 target: 'http://172.18.40.20:800',
                 // target: 'http://172.18.40.52:8000',
                 changeOrigin: true,
