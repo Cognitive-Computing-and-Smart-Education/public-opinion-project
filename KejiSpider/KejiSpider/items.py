@@ -1,33 +1,29 @@
+# -*- coding: utf-8 -*-
+
 # Define here the models for your scraped items
 #
 # See documentation in:
-# https://docs.scrapy.org/en/latest/topics/items.html
-
+# https://doc.scrapy.org/en/latest/topics/items.html
 
 from scrapy import Item, Field
-
-
-class XinhuanetspiderItem(Item):
-    # define the fields for your item here like:
-    # name = scrapy.Field()
-    pass
 
 
 class TitleItem(Item):
     # define the fields for your item here like:
     # name = scrapy.Field()
-    title_id = Field()
+
+    target = Field()
     title = Field()
-    keyword = Field()
-    key = Field()
-    pubtime = Field()
-    sitename = Field()
     url = Field()
+    originalName = Field()
+    upload_time = Field()
     sentiment = Field()
+    key = Field()
 
 
 class TextItem(Item):
     # define the fields for your item here like:
     # name = scrapy.Field()
+
+    url = Field()
     text = Field()
-    title_id = Field()

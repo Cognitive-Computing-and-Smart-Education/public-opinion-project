@@ -20,6 +20,7 @@ module.exports = {
             '/api': {
                 // target: 'http://172.18.40.39:8888',
                 target: 'http://172.18.40.20:800',
+                // target: 'http://172.18.40.52:8000',
                 changeOrigin: true,
                 ws: true,
                 pathRewrite: {
@@ -29,7 +30,7 @@ module.exports = {
         }
     },
     lintOnSave: false,
-    baseUrl: '/',
+    publicPath: './',
     chainWebpack: config => {
         config.resolve.alias
             .set('@', resolve('src'))

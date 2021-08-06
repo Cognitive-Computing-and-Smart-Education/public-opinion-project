@@ -1,10 +1,13 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import home from './modules/home'
+
+
+
 Vue.use(Vuex)
 
-
 export default new Vuex.Store({
-    strict: true,
+    // strict: true,
     state: {
         styleName: '' //风格名称。
     },
@@ -14,7 +17,9 @@ export default new Vuex.Store({
     mutations: {
 
     },
-    modules: {},
+    modules: {
+        home
+    },
     actions: {
 
     }

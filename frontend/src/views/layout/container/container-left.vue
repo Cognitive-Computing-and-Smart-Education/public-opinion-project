@@ -51,7 +51,8 @@
 </template>
 
 <script>
-    import { getCeshi } from '@/api/user'
+    import { getNews, getNewsInfluence } from '@/api/Home'
+    import { mapGetters, mapMutations } from "vuex";
 
     export default {
         name: "container-left",
@@ -60,98 +61,76 @@
                 retrievalForm: {
                     search: ''
                 },
-                retrievalList: [
-                    {
-                        code: '12',
-                        title: '1222222222222222'
-                    },{
-                        code: '22',
-                        title: '1222222222222222'
-                    },{
-                        code: '33',
-                        title: '1222222222222222'
-                    },{
-                        code: '44',
-                        title: '1222222222222222'
-                    }
-                ],
-                prizeList: [
-                    {
-                        id: '1',
-                        heatDegree: '1675',
-                        title: '11111111111111111111111',
-                        time: '47分钟前',
-                        content: '新闻内容新闻内容新闻内容新闻内容新闻内容新闻内容新闻内容新闻内容新闻内容新闻内容新闻内容新闻内容新闻内容新闻内容新闻内容新闻内容新闻内容'
-                    },{
-                        id: '2',
-                        heatDegree: '1675',
-                        title: '11111111111111111111111',
-                        time: '47分钟前',
-                        content: '新闻内容新闻内容新闻内容新闻内容新闻内容新闻内容新闻内容新闻内容新闻内容新闻内容新闻内容新闻内容新闻内容新闻内容新闻内容新闻内容新闻内容'
-                    },{
-                        id: '3',
-                        heatDegree: '1675',
-                        title: '11111111111111111111111',
-                        time: '47分钟前',
-                        content: '新闻内容新闻内容新闻内容新闻内容新闻内容新闻内容新闻内容新闻内容新闻内容新闻内容新闻内容新闻内容新闻内容新闻内容新闻内容新闻内容新闻内容'
-                    },{
-                        id: '4',
-                        heatDegree: '1675',
-                        title: '11111111111111111111111',
-                        time: '47分钟前',
-                        content: '新闻内容新闻内容新闻内容新闻内容新闻内容新闻内容新闻内容新闻内容新闻内容新闻内容新闻内容新闻内容新闻内容新闻内容新闻内容新闻内容新闻内容'
-                    },{
-                        id: '5',
-                        heatDegree: '1675',
-                        title: '11111111111111111111111',
-                        time: '47分钟前',
-                        content: '新闻内容新闻内容新闻内容新闻内容新闻内容新闻内容新闻内容新闻内容新闻内容新闻内容新闻内容新闻内容新闻内容新闻内容新闻内容新闻内容新闻内容'
-                    },{
-                        id: '6',
-                        heatDegree: '1675',
-                        title: '11111111111111111111111',
-                        time: '47分钟前',
-                        content: '新闻内容新闻内容新闻内容新闻内容新闻内容新闻内容新闻内容新闻内容新闻内容新闻内容新闻内容新闻内容新闻内容新闻内容新闻内容新闻内容新闻内容'
-                    },{
-                        id: '7',
-                        heatDegree: '1675',
-                        title: '11111111111111111111111',
-                        time: '47分钟前',
-                        content: '新闻内容新闻内容新闻内容新闻内容新闻内容新闻内容新闻内容新闻内容新闻内容新闻内容新闻内容新闻内容新闻内容新闻内容新闻内容新闻内容新闻内容'
-                    },{
-                        id: '8',
-                        heatDegree: '1675',
-                        title: '11111111111111111111111',
-                        time: '47分钟前',
-                        content: '新闻内容新闻内容新闻内容新闻内容新闻内容新闻内容新闻内容新闻内容新闻内容新闻内容新闻内容新闻内容新闻内容新闻内容新闻内容新闻内容新闻内容'
-                    },{
-                        id: '9',
-                        heatDegree: '111',
-                        title: '11111111111111111111111',
-                        time: '47分钟前',
-                        content: '新闻内容新闻内容新闻内容新闻内容新闻内容新闻内容新闻内容新闻内容新闻内容新闻内容新闻内容新闻内容新闻内容新闻内容新闻内容新闻内容新闻内容'
-                    }
-                ],
+                retrievalList: [],
+                prizeList: [],
                 activeIndex: 0,
                 intnum: undefined
             };
         },
         computed: {
+            ...mapGetters(["homeAreaName"]),
             top() {
-                return -this.activeIndex * 119 + 'px';
+                return -this.activeIndex * 131 + 'px';
+            }
+        },
+        watch: {
+            homeAreaName() {
+                // console.log(this.homeAreaName)
+                this.init(this.homeAreaName);
             }
         },
         mounted() {
-            this.ScrollUp();
+            this.init()
         },
         methods: {
-            geiMessage() {
-                getCeshi({ keyword: '教育 编程' }).then(res => {
-                    console.log(res)
+            // 排序
+            sortByKey(array,key){
+                return array.sort(function(a,b){
+                    var x = a[key];
+                    var y = b[key];
+                    return ((x < y) ? -1 : (x > y) ? 1 : 0);
+                })
+            },
+            init(Area_name) {
+                this.Stop()
+                this.geiMessage(Area_name)
+                this.$nextTick(function () {
+                    this.ScrollUp();
+                })
+            },
+            timestampToTime(data) {
+                let dt = new Date()
+                let yyyy = dt.getFullYear()
+                let MM = (dt.getMonth() + 1).toString().padStart(2, '0')
+                let dd = dt.getDate().toString().padStart(2, '0')
+                let h = dt.getHours().toString().padStart(2, '0')
+                let m = dt.getMinutes().toString().padStart(2, '0')
+                let s = dt.getSeconds().toString().padStart(2, '0')
+                return MM + '月' + dd + '日 ' + h + ':' + m
+            },
+            geiMessage(Area_name) {
+                getNewsInfluence({ Area_name: Area_name || '' }).then(res => {
+                    console.log('getNewsInfluence',res)
+                    for(let i in res.data.date) {
+                        if(i > 20) {
+                            break;
+                        }
+                        let obj = res.data.date[i]
+                        let objData = {
+                            id: obj.id,
+                            heatDegree: Math.floor(obj.value.yx) * 100,
+                            title: obj.value.title,
+                            time: obj.value.time,
+                            content: obj.value.text
+                        }
+                        this.prizeList.push(objData)
+                    }
                 })
             },
             onSubmit() {
-
+                getNews({ keyword: this.retrievalForm.search }).then(res => {
+                    this.retrievalList = res.data.News_list
+                })
             },
             ScrollUp() {
                 // eslint-disable-next-line no-unused-vars
@@ -175,6 +154,16 @@
 </script>
 
 <style scoped>
+    .event-retrieval-nodata{
+        font-size: 24px;
+        color: #909DBE;
+        width: 100%;
+        font-weight: bolder;
+        height: 70%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
     .event-retrieval-listBox{
         width: 100%;
         margin-top: 10px;
@@ -218,6 +207,7 @@
     /deep/ .el-input__inner{
         background-color: rgba(0,0,0,0);
         border-color: #2f4e80;
+        color: #fff;
     }
     .current-title:before{
         content: '';
@@ -268,9 +258,9 @@
         align-items: center;
         justify-content: flex-start;
         height: 102px;
-        padding-bottom: 12px;
+        padding-bottom: 14px;
         border-bottom: 1px solid #142852;
-        padding-top: 12px;
+        padding-top: 14px;
     }
     .scroll-content li:last-child{
         border-bottom: none;

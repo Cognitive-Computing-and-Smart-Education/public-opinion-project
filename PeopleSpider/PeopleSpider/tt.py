@@ -1,4 +1,4 @@
-from PeopleSpider.db import db
+from Spider.db import db
 
 
 b="sada.people.com.cn/dfa"
