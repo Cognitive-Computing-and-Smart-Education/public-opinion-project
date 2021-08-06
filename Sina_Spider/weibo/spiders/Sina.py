@@ -10,9 +10,9 @@ class WeiboSpider(Spider):
 
     allowed_domains = ['m.weibo.cn']
 
-    sql = "CREATE TABLE IF NOT EXISTS `title`(`id` varchar(255)  NOT NULL,`title` varchar(255) ,`openurl` varchar(" \
+    sql = "CREATE TABLE IF NOT EXISTS `title`(`id` varchar(255)  NOT NULL,`title` varchar(255) ,`url` varchar(" \
           "255) ,`key` varchar(255) ,`isCrawled` int ,`auth_id` varchar(255) ,`auth_name` varchar(255) ," \
-          "`text` longtext ,`time` datetime(0) ,`read_num` int  ,`forward_num` int ,`comment_num` int ,`like_num` int "\
+          "`text` longtext ,`time` datetime(0) ,`read_num` int  ,`forward_num` int ,`comment_num` int ,`like_num` int " \
           ",`comment_id`  varchar(255),`comment_times`  int  PRIMARY KEY (`id`) USING BTREE) ; "
 
     db.exec_(sql)
@@ -21,11 +21,12 @@ class WeiboSpider(Spider):
     # sql = """CREATE TABLE IF NOT EXISTS `key`  (`key` varchar(255) NOT NULL)"""
     # db.exec_(sql)
 
-    # keywords = ['教育', '教学', '体育教育', '智慧教育', '科技', '体育', ]
+    keywords = ['教育', '教学', '体育教育', '智慧教育', '科技', '体育', ] + ['国际教育', '特殊教育', '学科竞赛', '职业教育', 'K12', "婴儿教育", "幼儿教育"] + [
+        '艺术培训', '远程教育', '线下教育', 'steam教育', '应试教育', '中考', '高考', '课外辅导', '科普教育', '海外教育', '爱国教育', ]
 
     # keywords = ['国际教育', '特殊教育', '学科竞赛', '职业教育', 'K12', "婴儿教育", "幼儿教育"]
 
-    keywords = ['艺术培训', '远程教育', '线下教育', 'steam教育', '应试教育', '中考', '高考', '课外辅导', '科普教育', '海外教育', '爱国教育', ]
+    # keywords = ['艺术培训', '远程教育', '线下教育', 'steam教育', '应试教育', '中考', '高考', '课外辅导', '科普教育', '海外教育', '爱国教育', ]
 
     search_url = 'https://m.weibo.cn/api/container/getIndex?containerid=100103type%3D21%26q%3D{' \
                  'keyword}%26t%3D0&page_type=searchall&page={page} '
@@ -44,7 +45,7 @@ class WeiboSpider(Spider):
         """
         解析搜索结果
         """
-        print(self.keywords)
+        # print(self.keywords)
         result = json.loads(response.text)
         try:
             if result.get('data').get('cards')[0].get('card_group'):
