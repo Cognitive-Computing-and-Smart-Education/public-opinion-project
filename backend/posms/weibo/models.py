@@ -131,6 +131,20 @@ class DjangoSession(models.Model):
         db_table = 'django_session'
 
 
+class KejiNews(models.Model):
+    title = models.CharField(max_length=255)
+    target = models.CharField(max_length=255, blank=True, null=True)
+    originalname = models.CharField(db_column='originalName', max_length=255, blank=True, null=True)  # Field name made lowercase.
+    url = models.CharField(primary_key=True, max_length=255)
+    key = models.CharField(max_length=255, blank=True, null=True)
+    text = models.TextField(blank=True, null=True)
+    upload_time = models.DateField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'keji_news'
+
+
 class PeopleNews(models.Model):
     title_id = models.BigIntegerField(primary_key=True)
     originalname = models.CharField(db_column='originalName', max_length=255, blank=True, null=True)  # Field name made lowercase.
@@ -138,8 +152,9 @@ class PeopleNews(models.Model):
     url = models.CharField(max_length=255, blank=True, null=True)
     key = models.CharField(max_length=255, blank=True, null=True)
     text = models.TextField(blank=True, null=True)
-    upload_time = models.DateTimeField(blank=True, null=True)
+    time = models.DateTimeField(blank=True, null=True)
     sentiment = models.IntegerField(blank=True, null=True)
+    province = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
         managed = False
@@ -163,7 +178,7 @@ class Test(models.Model):
 class Title(models.Model):
     title_id = models.CharField(primary_key=True, max_length=255)
     title = models.CharField(max_length=255, blank=True, null=True)
-    openurl = models.CharField(max_length=255, blank=True, null=True)
+    url = models.CharField(max_length=255, blank=True, null=True)
     key = models.CharField(max_length=255, blank=True, null=True)
     iscrawled = models.IntegerField(db_column='isCrawled', blank=True, null=True)  # Field name made lowercase.
     uid = models.CharField(max_length=255, blank=True, null=True)
@@ -204,11 +219,12 @@ class User(models.Model):
 
 class Wangyiedu(models.Model):
     title_id = models.CharField(primary_key=True, max_length=255)
-    title = models.CharField(max_length=255, blank=True, null=True)
-    upload_time = models.DateTimeField(blank=True, null=True)
-    source = models.CharField(max_length=255, blank=True, null=True)
-    url = models.CharField(max_length=255, blank=True, null=True)
-    text = models.TextField(blank=True, null=True)
+    title = models.CharField(max_length=255, db_collation='utf8mb4_0900_ai_ci', blank=True, null=True)
+    time = models.DateTimeField(blank=True, null=True)
+    source = models.CharField(max_length=255, db_collation='utf8mb4_0900_ai_ci', blank=True, null=True)
+    url = models.CharField(max_length=255, db_collation='utf8mb4_0900_ai_ci', blank=True, null=True)
+    text = models.TextField(db_collation='utf8mb4_0900_ai_ci', blank=True, null=True)
+    province = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
         managed = False
@@ -219,12 +235,13 @@ class Xinhuanews(models.Model):
     title_id = models.BigIntegerField(primary_key=True)
     title = models.CharField(max_length=255, blank=True, null=True)
     keyword = models.CharField(max_length=255, blank=True, null=True)
-    pubtime = models.DateTimeField(blank=True, null=True)
+    time = models.DateTimeField(blank=True, null=True)
     sitename = models.CharField(max_length=255, blank=True, null=True)
     url = models.CharField(max_length=255, blank=True, null=True)
     key = models.CharField(max_length=255, blank=True, null=True)
     text = models.TextField(blank=True, null=True)
     sentiment = models.IntegerField(blank=True, null=True)
+    province = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
         managed = False
