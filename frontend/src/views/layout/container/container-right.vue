@@ -99,7 +99,7 @@
                     }
                     let myChart = this.$echarts.init(document.getElementById('mediaImpressionChart'))
                     myChart.setOption({
-                        legend: {
+                        /*legend: {
                             data: ['网媒', '微信', '微博'],
                             orient: 'vertical',
                             left: 'left',
@@ -110,7 +110,7 @@
                                 color: '#fff',
                                 fontSize: 14
                             },
-                        },
+                        },*/
                         tooltip: {
                             trigger: 'axis',
                             transitionDuration: 0
@@ -191,7 +191,7 @@
                         legend: {
                             type: 'scroll',
                             orient: 'vertical',
-                            left: 'left',
+                            right: 'right',
                             top: 'center',
                             itemWidth: 18,
                             itemHeight: 10,
