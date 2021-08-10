@@ -20,9 +20,9 @@ class WeiboPipeline:
         if isinstance(item, TitleItem):
             print(item)
 
-            sql = f"INSERT INTO title VALUES ('{item['id']}', '{item['title']}', '{item['openurl']}','{item['key']}',0,0,'','','0-0-0 0:0:0',0,0,0,0,NULL)"
+            sql = f"INSERT INTO title VALUES ('{item['id']}', '{item['title']}', '{item['openurl']}','{item['key']}',0,0,'','','0-0-0 0:0:0',0,0,0,0,NULL,NULL,NULL,NULL)"
             db.exec_(sql)
-
+            return item
         # if isinstance(item, UrlItem):
         #     sql = f"INSERT INTO `url` VALUES ('{item['url']}')"
         #     db.exec_(sql)
@@ -33,6 +33,7 @@ class WeiboPipeline:
             elif item.isCrawled == -1:
                 sql = f"UPDATE title SET `isCrawled`=-1 WHERE `id`='{id}'"
             db.exec(sql, item.id)
+            return item
 
 
 class MongoPipeline(object):
