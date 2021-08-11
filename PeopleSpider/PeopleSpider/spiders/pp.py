@@ -110,7 +110,7 @@ class PeopleSpider(RedisSpider):
                           callback=self.parse,
                           meta={'key': key, 'page': page}, dont_filter=True)
         else:
-            time.sleep(60*60*8)
+            time.sleep(60*60*4)
             page = 1
             yield Request("http://search.people.cn/api-search/front/search", method="POST",
                           body=json.dumps(self.data), headers=self.headers,
