@@ -191,7 +191,7 @@
                         legend: {
                             type: 'scroll',
                             orient: 'vertical',
-                            right: 'right',
+                            right: 40,
                             top: 'center',
                             itemWidth: 18,
                             itemHeight: 10,

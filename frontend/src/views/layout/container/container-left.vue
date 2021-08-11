@@ -16,12 +16,14 @@
                 <div v-if="retrievalList.length == 0" class="event-retrieval-nodata">
                     暂无数据
                 </div>
-                <ul v-else class="event-retrieval-list">
-                    <li v-for="(item,index) in retrievalList" :key="`retrievalList-${index}`">
-                        <span>{{ index + 1 }}</span>
-                        <p>{{ item.title }}</p>
-                    </li>
-                </ul>
+                <el-scrollbar style="height: 100%;width: 100%" v-else>
+                    <ul class="event-retrieval-list">
+                        <li v-for="(item,index) in retrievalList" :key="`retrievalList-${index}`">
+                            <span>{{ index + 1 }}</span>
+                            <p>{{ item.title }}</p>
+                        </li>
+                    </ul>
+                </el-scrollbar>
             </div>
         </div>
         <div class="ranking-list">
@@ -33,7 +35,7 @@
             </div>
             <div class="message-box">
                 <ul class="scroll-content" :style="{ top }" @mouseenter="Stop()" @mouseleave="Up()">
-                    <li v-for="item in prizeList" :key="item.id">
+                    <li v-for="item in prizeList" :key="`prizeList-${item.id}`">
                         <div class="heat-degree">
                             <div class="heat-degree-val">{{ item.heatDegree }}</div>
                             <div class="heat-degree-txt">当前热度</div>
@@ -93,7 +95,11 @@
             },
             init(Area_name) {
                 this.Stop()
+                this.activeIndex = 0
+                this.intnum = undefined
+                this.prizeList = []
                 this.geiMessage(Area_name)
+                this.onSubmitActive('教育')
                 this.$nextTick(function () {
                     this.ScrollUp();
                 })
@@ -129,6 +135,26 @@
             },
             onSubmit() {
                 getNews({ keyword: this.retrievalForm.search }).then(res => {
+                    this.retrievalList = []
+                    this.retrievalList = res.data.News_list
+                    if(this.retrievalList.length > 0) {
+                        let audiot_style = document.getElementsByClassName("audiot_style");
+                        let translateText = this.retrievalList;
+                        let inputValue = this.retrievalForm.search;
+                        for (let i = 0; i < translateText.length; i++) {
+                            if (translateText[i].title.indexOf(inputValue) >= 0) {
+                                var values = translateText[i].title.split(inputValue);
+                                audiot_style[i].innerHTML = values.join(
+                                    '<span style="color:red;">' + inputValue + "</span>"
+                                );
+                            }
+                        }
+                    }
+                })
+            },
+            onSubmitActive(data) {
+                this.retrievalList = []
+                getNews({ keyword: data }).then(res => {
                     this.retrievalList = res.data.News_list
                 })
             },
@@ -154,6 +180,10 @@
 </script>
 
 <style scoped>
+    /deep/ .el-scrollbar__wrap{
+        overflow-x: hidden;
+        width: 100%;
+    }
     .event-retrieval-nodata{
         font-size: 24px;
         color: #909DBE;

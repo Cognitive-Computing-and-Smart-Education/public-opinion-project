@@ -34,6 +34,14 @@
         </div>
         <div class="map-box">
             <div id="container" style="width:100%; height:100%"></div>
+            <div class="map-box-switch">
+                <el-switch
+                        @change="mapSwitchChange"
+                        v-model="mapSwitch"
+                        :disabled="mapSwitch"
+                        active-text="全国数据">
+                </el-switch>
+            </div>
         </div>
         <div class="industry-voice-box">
             <div class="industry-voice-title">细分行业声量</div>
@@ -56,7 +64,8 @@
                 todayMonitor: '',
                 sensitive: '',
                 informationSource: '',
-                mapData: []
+                mapData: [],
+                mapSwitch: true
             };
         },
         computed: {
@@ -77,6 +86,12 @@
         },
         methods: {
             ...mapMutations(["changeHomeAreaName"]),
+            mapSwitchChange() {
+                let _that = this
+                if(_that.mapSwitch) {
+                    _that.changeHomeAreaName('全国');
+                }
+            },
             // async
             async init () {
                 let _that = this
@@ -126,7 +141,7 @@
                         coordinateSystem: 'geo' // 对应上方配置
                     },
                         {
-                            name: '启动次数', // 浮动框的标题
+                            name: '舆情数量', // 浮动框的标题
                             type: 'map',
                             geoIndex: 0,
                             data: this.mapData
@@ -136,6 +151,7 @@
 
                 myChart.on('click', function (param) {
                     _that.changeHomeAreaName(param.data.name);
+                    _that.mapSwitch = false
                 });
             },
             getIndustryVoice(Area_name) {
@@ -216,6 +232,15 @@
 </script>
 
 <style scoped>
+    /deep/ .el-switch__label{
+        color: #fff;
+    }
+    /deep/ .el-switch__label.is-active{
+        color: #409EFF !important;
+    }
+    /deep/ .el-switch.is-disabled{
+        opacity: 1;
+    }
     .current-title{
         height: 26px;
         display: flex;
@@ -275,6 +300,13 @@
         border: 1px solid #1e2252;
         margin: 15px 0;
         height: calc(100% - 390px);
+        position: relative;
+    }
+    .map-box-switch{
+        position: absolute;
+        z-index: 1000;
+        left: 20px;
+        bottom: 20px;
     }
     .industry-voice-box{
         width: 100%;
