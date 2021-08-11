@@ -26,7 +26,10 @@ SCHEDULER_PERSIST = True
 # SCHEDULER_QUEUE_CLASS = "scrapy_redis.queue.SpiderQueue"
 # SCHEDULER_QUEUE_CLASS = "scrapy_redis.queue.SpiderStack"
 
+ITEM_PIPELINES = {
+    'PeopleSpider.pipelines.TitlePipeline': 300,
 
+}
 DOWNLOAD_DELAY = 2
 
 # LOG_LEVEL = 'WARNING'
