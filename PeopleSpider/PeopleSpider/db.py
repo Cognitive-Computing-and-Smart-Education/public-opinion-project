@@ -5,7 +5,7 @@ import traceback
 class db():
     # host = "13bfc66f81062088.natapp.cc"  # 小邵笔记本
     # host = "127.0.0.1"
-    host = "172.18.40.39"
+    host = "172.18.40.131"
     user = "root"
     password = "123456"
 

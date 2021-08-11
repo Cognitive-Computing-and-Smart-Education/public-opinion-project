@@ -94,7 +94,7 @@ class PeopleSpider(RedisSpider):
                 yield item
 
                 yield Request(url=item['url'], headers=self.headers, callback=self.parse_text,
-                              meta={'title_id': item['title_id'], 'item': item}, dont_filter=True)
+                              meta={'title_id': item['title_id'], 'item': item}, )
                 # break
 
             key = response.meta['key']
@@ -106,9 +106,10 @@ class PeopleSpider(RedisSpider):
 
             self.data['key'] = key
             self.data['page'] = page
-            yield Request(self.url, body=json.dumps(self.data), method='POST', headers=self.headers,
+            yield Request("http://search.people.cn/api-search/front/search", method="POST",
+                          body=json.dumps(self.data), headers=self.headers,
                           callback=self.parse,
-                          meta={'key': key, 'page': page}, )
+                          meta={'key': key, 'page': page}, dont_filter=True)
         else:
             return
 
