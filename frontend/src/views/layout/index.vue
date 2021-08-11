@@ -1,7 +1,7 @@
 <template>
     <el-container style="height: 100%">
         <el-header height="80px">
-            <current-head :name="'教育舆情监控系统'"></current-head>
+            <current-head :name="'教育舆情监控系统'" :currentTime="currentTime"></current-head>
         </el-header>
         <el-main>
             <container-left class="container-left"></container-left>
@@ -28,14 +28,27 @@
         },
         data() {
             return {
-
+                currentTime: ''
             };
         },
-        mounted () {
-
+        created () {
+            this.getNowTime()
         },
         methods: {
+            timestampToTime(data) {
+                let yyyy = data.getFullYear()
+                let MM = (data.getMonth() + 1).toString().padStart(2, '0')
+                let dd = data.getDate().toString().padStart(2, '0')
+                let h = data.getHours().toString().padStart(2, '0')
+                let m = data.getMinutes().toString().padStart(2, '0')
+                let s = data.getSeconds().toString().padStart(2, '0')
+                return yyyy + '年' + MM + '月' + dd + '日 ' + h + ':' + m + ':' + s
+            },
+            getNowTime() {
+                let aData = new Date();
 
+                this.currentTime = this.timestampToTime(aData)
+            },
         }
     }
 </script>

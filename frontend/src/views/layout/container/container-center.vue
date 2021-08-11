@@ -4,18 +4,18 @@
             <div>
                 <div class="current-title">
                     累计监控总量
-                    <div class="current-title-time">
-                        {{ currentTime }}
-                    </div>
+<!--                    <div class="current-title-time">-->
+<!--                        {{ currentTime }}-->
+<!--                    </div>-->
                 </div>
                 <div class="statistics-text statistics-cumulative">{{ cumulative }}</div>
             </div>
             <div>
                 <div class="current-title">
                     今日监控总量
-                    <div class="current-title-time">
-                        {{ currentTime }}
-                    </div>
+<!--                    <div class="current-title-time">-->
+<!--                        {{ currentTime }}-->
+<!--                    </div>-->
                 </div>
                 <div class="statistics-text statistics-todayMonitor">{{ todayMonitor }}</div>
             </div>
@@ -64,14 +64,14 @@
         },
         watch: {
             homeAreaName() {
-                this.getNowTime();
+                // this.getNowTime();
                 this.getMonitorData(this.homeAreaName);
                 this.getIndustryVoice(this.homeAreaName);
             }
         },
         mounted () {
             this.init();
-            this.getNowTime();
+            // this.getNowTime();
             this.getMonitorData();
             this.getIndustryVoice();
         },
@@ -195,21 +195,21 @@
                 })
 
             },
-            timestampToTime(data) {
-                let dt = new Date()
-                let yyyy = dt.getFullYear()
-                let MM = (dt.getMonth() + 1).toString().padStart(2, '0')
-                let dd = dt.getDate().toString().padStart(2, '0')
-                let h = dt.getHours().toString().padStart(2, '0')
-                let m = dt.getMinutes().toString().padStart(2, '0')
-                let s = dt.getSeconds().toString().padStart(2, '0')
-                return MM + '月' + dd + '日 ' + h + ':' + m
-            },
-            getNowTime() {
-                let aData = new Date();
-
-                this.currentTime = this.timestampToTime(aData)
-            },
+            // timestampToTime(data) {
+            //     let dt = new Date()
+            //     let yyyy = dt.getFullYear()
+            //     let MM = (dt.getMonth() + 1).toString().padStart(2, '0')
+            //     let dd = dt.getDate().toString().padStart(2, '0')
+            //     let h = dt.getHours().toString().padStart(2, '0')
+            //     let m = dt.getMinutes().toString().padStart(2, '0')
+            //     let s = dt.getSeconds().toString().padStart(2, '0')
+            //     return MM + '月' + dd + '日 ' + h + ':' + m
+            // },
+            // getNowTime() {
+            //     let aData = new Date();
+            //
+            //     this.currentTime = this.timestampToTime(aData)
+            // },
 
         }
     }
@@ -278,7 +278,7 @@
     }
     .industry-voice-box{
         width: 100%;
-        height: 260px;
+        height: 248px;
         background: url("../../../assets/img/current-border.png") center center no-repeat;
         background-size: 100% 100%;
     }

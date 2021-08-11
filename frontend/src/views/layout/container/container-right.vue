@@ -99,7 +99,7 @@
                     }
                     let myChart = this.$echarts.init(document.getElementById('mediaImpressionChart'))
                     myChart.setOption({
-                        legend: {
+                        /*legend: {
                             data: ['网媒', '微信', '微博'],
                             orient: 'vertical',
                             left: 'left',
@@ -110,7 +110,7 @@
                                 color: '#fff',
                                 fontSize: 14
                             },
-                        },
+                        },*/
                         tooltip: {
                             trigger: 'axis',
                             transitionDuration: 0
@@ -191,7 +191,7 @@
                         legend: {
                             type: 'scroll',
                             orient: 'vertical',
-                            left: 'left',
+                            right: 'right',
                             top: 'center',
                             itemWidth: 18,
                             itemHeight: 10,
@@ -219,8 +219,10 @@
                 getAreaNewsTre({ Area_name: Area_name || '' }).then(res => {
                     let time = []
                     let data = []
-                    for(let i in res.data.Tre_list) {
-                        let obj = res.data.Tre_list[i]
+                    let list = res.data.Tre_list
+                    let listData = list.reverse()
+                    for(let i in listData) {
+                        let obj = listData[i]
                         time.push(obj.time)
                         data.push(obj.news_num)
                     }

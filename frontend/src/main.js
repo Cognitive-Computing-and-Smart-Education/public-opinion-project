@@ -50,6 +50,9 @@ VueAMap.initAMapApiLoader({
   v: '1.4.4'
 });*/
 
+
+
+
 new Vue({
   router,
   store,
