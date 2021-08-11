@@ -19,7 +19,6 @@ class TitlePipeline(object):
             self.db.exec_(sql)
             # if item["sentiment"]:
             #     self.db.exec_(f"update people_news set `sentiment`='{item['sentiment']}'")
-	
             return item
 
         if isinstance(item, TextItem):

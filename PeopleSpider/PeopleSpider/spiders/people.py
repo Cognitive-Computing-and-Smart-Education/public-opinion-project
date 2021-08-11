@@ -14,7 +14,8 @@ from PeopleSpider import ema
 class PeopleSpider(scrapy.Spider):
     name = 'people'
     allowed_domains = ['people.cn', ]
-    url = 'http://search.people.cn/api-search/elasticSearch/search'
+    # url = 'http://search.people.cn/api-search/elasticSearch/search'
+    url = 'http://search.people.cn/api-search/front/search'
     keys = ['教育', '教学', '体育教育', '智慧教育', '科技', '体育', ] + ['国际教育', '特殊教育', '学科竞赛', '职业教育', 'K12', "婴儿教育", "幼儿教育"] + [
         '艺术培训', '远程教育', '线下教育', 'steam教育', '应试教育', '中考', '高考', '课外辅导', '科普教育', '海外教育', '爱国教育', ]
 
@@ -27,18 +28,11 @@ class PeopleSpider(scrapy.Spider):
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) '
                       'Chrome/68.0.3440.75 Safari/537.36',
     }
-    data = {
-        "endTime": 0,
-        "hasContent": True,
-        "hasTitle": True,
-        "isFuzzy": True,
-        "limit": 10,
-        "sortType": 2,
-        "startTime": 0,
-        "type": 1,
-    }
+    data = {"limit": 10, "hasTitle": True, "hasContent": True, "isFuzzy": True, "type": 1,
+            "sortType": 2, "startTime": 0, "endTime": 0}
+
     db1 = db(db="weibo")
-    SQL = "CREATE TABLE IF NOT EXISTS `people_news`  (`title_id` bigint NOT NULL,`originalName` varchar(255) ,`title` varchar(255) ,`url` varchar(255) ,`key` varchar(255) ,`text` longtext,`upload_time` datetime,PRIMARY KEY (`title_id`) USING BTREE);"
+    SQL = "CREATE TABLE IF NOT EXISTS `people_news`  (`title_id` bigint NOT NULL,`originalName` varchar(255) ,`title` varchar(255) ,`url` varchar(255) ,`key` varchar(255) ,`text` longtext,`time` datetime,PRIMARY KEY (`title_id`) USING BTREE);"
     db1.exec_(SQL)
 
     db2 = db(db="redis")

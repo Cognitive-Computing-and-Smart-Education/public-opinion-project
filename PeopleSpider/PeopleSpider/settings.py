@@ -9,7 +9,7 @@ NEWSPIDER_MODULE = 'PeopleSpider.spiders'
 ROBOTSTXT_OBEY = False
 
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
-CONCURRENT_REQUESTS = 32
+# CONCURRENT_REQUESTS = 32
 
 # 指定Redis的主机名和端口
 # REDIS_HOST = 'localhost'
