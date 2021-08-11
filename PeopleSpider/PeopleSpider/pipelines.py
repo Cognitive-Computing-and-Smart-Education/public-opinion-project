@@ -15,7 +15,7 @@ class TitlePipeline(object):
 
         if isinstance(item, TitleItem):
             sql = f"""insert into people_news(`title_id`,`originalName`,`title`,`url`,`key`,`upload_time`) values ({item['title_id']},'{item['originalName']}','{item['title']}','{item['url']}','{item['key']}','{item['upload_time']}');"""
-            print(sql)
+            # print(sql)
             self.db.exec_(sql)
             # if item["sentiment"]:
             #     self.db.exec_(f"update people_news set `sentiment`='{item['sentiment']}'")
@@ -25,7 +25,7 @@ class TitlePipeline(object):
             sql = f"update people_news set `text`='{item['text']}' where `title_id`='{item['title_id']}'"
             self.db.exec_(sql)
             # print(item)
-            print(sql)
+            # print(sql)
             return item
 
 # class TextPipeline(object):
