@@ -67,8 +67,9 @@ class PeopleSpider(RedisSpider):
 
         data = json.loads(response.text).get("data")
 
-        print(data)
-
+        # print(data)
+        key = response.meta['key']
+        self.data['key'] = key
         pages = data.get('pages')
         if response.meta['page'] <= pages:
             info_lsit = data.get("records")
@@ -97,21 +98,23 @@ class PeopleSpider(RedisSpider):
                               meta={'title_id': item['title_id'], 'item': item}, )
                 # break
 
-            key = response.meta['key']
             # sql = f"select `page` from people_data where `key`='{key}'"
             # page = int(self.db2.query(sql)[0][0])
             page = response.meta['page'] + 1
 
             # self.db2.exec_(f"update people_data set `page`={page} where `key`='{key}'")
 
-            self.data['key'] = key
             self.data['page'] = page
             yield Request("http://search.people.cn/api-search/front/search", method="POST",
                           body=json.dumps(self.data), headers=self.headers,
                           callback=self.parse,
                           meta={'key': key, 'page': page}, dont_filter=True)
         else:
-            return
+            page = 1
+            yield Request("http://search.people.cn/api-search/front/search", method="POST",
+                          body=json.dumps(self.data), headers=self.headers,
+                          callback=self.parse,
+                          meta={'key': key, 'page': page}, dont_filter=True)
 
     def parse_text(self, response):
         # 文本内容
