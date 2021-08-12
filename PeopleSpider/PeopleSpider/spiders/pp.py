@@ -14,9 +14,16 @@ from scrapy_redis.spiders import RedisSpider
 
 
 class PeopleSpider(RedisSpider):
+    # 定义爬取新闻的时间限制，开始与结束，均以秒为单位
+    now = int(time.time())  # 获取当前时间
+
+    # 设置间隔,目前为15天前至今
+    limit = 15 * 24 * 60 * 60
+    statiTime = now - limit
+
     name = 'pp'
     # allowed_domains = ['people.cn', '*']
-    # url = 'http://search.people.cn/api-search/elasticSearch/search'
+    # url = 'http://search.people.cn/api-search/elasticSearch/search' #旧接口不能用了
     # url = 'http://search.people.cn/api-search/front/search'
     #
 
@@ -30,9 +37,9 @@ class PeopleSpider(RedisSpider):
                       'Chrome/68.0.3440.75 Safari/537.36',
     }
     data = {"limit": 100, "hasTitle": True, "hasContent": True, "isFuzzy": True, "type": 1, "sortType": 2,
-            "startTime": 0, "endTime": 0}
+            "startTime": statiTime * 1000, "endTime": now * 1000}
     db1 = db(db="weibo")
-    SQL = "CREATE TABLE IF NOT EXISTS `people_news`  (`title_id` bigint NOT NULL,`originalName` varchar(255) ,`title` varchar(255) ,`url` varchar(255) ,`key` varchar(255) ,`text` longtext,`upload_time` datetime,PRIMARY KEY (`title_id`) USING BTREE);"
+    SQL = "CREATE TABLE IF NOT EXISTS `people_news`  (`title_id` bigint NOT NULL,`originalName` varchar(255) ,`title` varchar(255) ,`url` varchar(255) ,`key` varchar(255) ,`text` longtext,`time` datetime,PRIMARY KEY (`title_id`) USING BTREE);"
     db1.exec_(SQL)
     redis_key = "pp:keyword"
 
@@ -50,8 +57,6 @@ class PeopleSpider(RedisSpider):
         # page = self.db2.query(sql)[0][0]
 
         self.data['key'] = key
-        print(key)
-        print(type(key))
         self.data['page'] = page
         self.headers['Referer'] = f'http://search.people.cn/s/?keyword={key}&st=0&_=1628664973889'
         # data = {}
@@ -61,7 +66,6 @@ class PeopleSpider(RedisSpider):
                       body=json.dumps(self.data), headers=self.headers,
                       callback=self.parse,
                       meta={'key': key, 'page': page}, dont_filter=True)
-        # break
 
     def parse(self, response):
 
@@ -109,13 +113,14 @@ class PeopleSpider(RedisSpider):
                           body=json.dumps(self.data), headers=self.headers,
                           callback=self.parse,
                           meta={'key': key, 'page': page}, dont_filter=True)
-        else:
-            time.sleep(60*60*4)
-            page = 1
-            yield Request("http://search.people.cn/api-search/front/search", method="POST",
-                          body=json.dumps(self.data), headers=self.headers,
-                          callback=self.parse,
-                          meta={'key': key, 'page': page}, dont_filter=True)
+        # else:
+        #     pass
+            # time.sleep(60*60*4)
+            # page = 1
+            # yield Request("http://search.people.cn/api-search/front/search", method="POST",
+            #               body=json.dumps(self.data), headers=self.headers,
+            #               callback=self.parse,
+            #               meta={'key': key, 'page': page}, dont_filter=True)
 
     def parse_text(self, response):
         # 文本内容
