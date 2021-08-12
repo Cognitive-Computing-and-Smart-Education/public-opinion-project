@@ -9,6 +9,11 @@ import time
 # print(now -s)
 import json
 
-a = '{"code":200,"content":{"recommendation":null,"keyword":"资源","sortField":"0","optionsSearchTypes":null,"curPage":793,"results":null}}'
-b = json.loads(a)
-print(b)
+now = int(time.time())
+
+tt = "2021-08-01 19:24:02"
+now2Str = time.strptime(tt, "%Y-%m-%d %H:%M:%S")
+
+print(now)
+print(int(time.mktime(now2Str)))
+print(tt)

@@ -1,4 +1,4 @@
-import scrapy
+# import scrapy
 from scrapy import Spider, Request
 import json
 from lxml.etree import HTML
@@ -6,9 +6,14 @@ from pymysql.converters import escape_string
 from PeopleSpider.items import *
 from PeopleSpider.db import db
 from scrapy_redis.spiders import RedisSpider
+import time
 
 
 class XinhuanewsSpider(RedisSpider):
+    now = int(time.time())
+
+    # 获取截止十五天前的数据
+    startTime = now - 16 * 24 * 60 * 60
     name = 'xinhuanews'
     # allowed_domains = ['so.news.cn', ]
     # keys = ['教育', '教学', '体育教育', '智慧教育', '科技', '体育', '国际教育', '特殊教育', '学科竞赛', '职业教育', 'K12', '婴儿教育', '幼儿教育', '艺术培训',
@@ -51,6 +56,14 @@ class XinhuanewsSpider(RedisSpider):
         if data.get("results"):
             results = data.get("results")
             for result in results:
+
+                # 时间
+                upload_time = result.get("pubtime")
+
+                # 判断日期，中断爬虫
+                if time.mktime(time.strptime(upload_time, "%Y-%m-%d %H:%M:%S")) < self.startTime:
+                    break
+
                 # 新闻ID
                 title_id = result.get("contentId")
 
@@ -62,9 +75,6 @@ class XinhuanewsSpider(RedisSpider):
 
                 # 标签
                 keyword = result.get("keyword")
-
-                # 时间
-                upload_time = result.get("pubtime")
 
                 # 来源
                 sitename = result.get("sitename")
