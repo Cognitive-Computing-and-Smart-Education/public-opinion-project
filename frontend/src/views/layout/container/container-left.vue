@@ -16,14 +16,16 @@
                 <div v-if="retrievalList.length == 0" class="event-retrieval-nodata">
                     暂无数据
                 </div>
-                <el-scrollbar style="height: 100%;width: 100%" v-else>
-                    <ul class="event-retrieval-list">
+                <div style="height: 100%;width: 100%;overflow-y: auto" v-else class="infinite-list-wrapper">
+                    <ul class="event-retrieval-list" v-infinite-scroll="load" @infinite-scroll-disabled="disabled" :infinite-scroll-delay="500">
                         <li v-for="(item,index) in retrievalList" :key="`retrievalList-${index}`">
                             <span>{{ index + 1 }}</span>
                             <p>{{ item.title }}</p>
                         </li>
                     </ul>
-                </el-scrollbar>
+                    <p v-if="loading">加载中...</p>
+                    <p v-if="noMore">没有更多了</p>
+                </div>
             </div>
         </div>
         <div class="ranking-list">
@@ -66,13 +68,24 @@
                 retrievalList: [],
                 prizeList: [],
                 activeIndex: 0,
-                intnum: undefined
+                intnum: undefined,
+                loading: false,
+                pageSize: 0,
+                pageNum: 10,
+                finished: false,
+                listData: []
             };
         },
         computed: {
             ...mapGetters(["homeAreaName"]),
             top() {
                 return -this.activeIndex * 131 + 'px';
+            },
+            noMore () {
+                return this.finished
+            },
+            disabled () {
+                return this.loading || this.noMore
             }
         },
         watch: {
@@ -92,6 +105,45 @@
                     var y = b[key];
                     return ((x < y) ? -1 : (x > y) ? 1 : 0);
                 })
+            },
+            load () {
+                this.loading = true
+                setTimeout(() => {
+                    this.ortherSearch()
+                }, 2000)
+            },
+            ortherSearch() {
+                /*getNews({ keyword: this.retrievalForm.search || '教育', pageSize: this.pageSize + 1, pageNum: this.pageNum }).then(res => {
+                    if(res.code == 200) {
+                        let audiot_style = document.getElementsByClassName("audiot_style");
+                        let translateText = res.data.News_list;
+                        let inputValue = this.retrievalForm.search;
+                        if(res.data.News_list.length > 0 || this.retrievalForm.search !== '') {
+                            for (let i = 0; i < translateText.length; i++) {
+                                if (translateText[i].title.indexOf(inputValue) >= 0) {
+                                    var values = translateText[i].title.split(inputValue);
+                                    audiot_style[i].innerHTML = values.join(
+                                        '<span style="color:red;">' + inputValue + "</span>"
+                                    );
+                                }
+                            }
+                        }
+                        this.retrievalList = this.retrievalList.concat(translateText)
+                    }
+                })*/
+                let list = []
+                for(let i=this.pageSize * 10; i< this.listData.length; i++) {
+                    if(i > (this.pageSize + 1) * 10){
+                        break;
+                    }
+                    list.push(this.listData[i])
+                }
+                this.retrievalList = this.retrievalList.concat(list)
+                this.loading = false
+                this.pageSize = this.pageSize + 1
+                if(this.listData.length <= this.pageSize * 10) {
+                    this.finished = true
+                }
             },
             init(Area_name) {
                 this.Stop()
@@ -134,13 +186,15 @@
                 })
             },
             onSubmit() {
+                this.pageSize = 0;
+                this.pageNum = 10;
+                this.finished = false;
                 getNews({ keyword: this.retrievalForm.search }).then(res => {
-                    this.retrievalList = []
-                    this.retrievalList = res.data.News_list
-                    if(this.retrievalList.length > 0) {
-                        let audiot_style = document.getElementsByClassName("audiot_style");
-                        let translateText = this.retrievalList;
-                        let inputValue = this.retrievalForm.search;
+                    let audiot_style = document.getElementsByClassName("audiot_style");
+                    let translateText = res.data.News_list;
+                    let inputValue = this.retrievalForm.search;
+                    // listData
+                    if(translateText.length > 0) {
                         for (let i = 0; i < translateText.length; i++) {
                             if (translateText[i].title.indexOf(inputValue) >= 0) {
                                 var values = translateText[i].title.split(inputValue);
@@ -150,18 +204,54 @@
                             }
                         }
                     }
+                    if(translateText.length > 10) {
+                        this.listData = translateText
+                        let list = []
+                        for(let i=0; i < this.listData.length; i++) {
+                            if(i > 10){
+                                break;
+                            }
+                            list.push(this.listData[i])
+                        }
+                        this.retrievalList = list
+                        this.pageSize = this.pageSize + 1
+                        if(this.listData.length < this.pageSize * 10) {
+                            this.finished = true
+                        }
+                    }else {
+                        this.retrievalList = res.data.News_list
+                        this.finished = true
+                    }
                 })
             },
             onSubmitActive(data) {
                 this.retrievalList = []
                 getNews({ keyword: data }).then(res => {
-                    this.retrievalList = res.data.News_list
+                    let translateText = res.data.News_list;
+                    if(translateText.length > 10) {
+                        this.listData = translateText
+                        let list = []
+                        for(let i=0; i < this.listData.length; i++) {
+                            if(i > 9){
+                                break;
+                            }
+                            list.push(this.listData[i])
+                        }
+                        this.retrievalList = list
+                        this.pageSize = this.pageSize + 1
+                        if(this.listData.length <= this.pageSize * 10) {
+                            this.finished = true
+                        }
+                    }else {
+                        this.retrievalList = res.data.News_list
+                        this.finished = true
+                    }
                 })
             },
             ScrollUp() {
                 // eslint-disable-next-line no-unused-vars
                 this.intnum = setInterval(_ => {
-                    if (this.activeIndex < this.prizeList.length - 3) {
+                    if (this.activeIndex <= this.prizeList.length - 3) {
                         this.activeIndex += 1;
                     } else {
                         this.activeIndex = 0;
@@ -200,18 +290,17 @@
         height: calc(100% - 108px);
     }
     .event-retrieval-list{
-        width: 100%;
-        height: 100%;
-        overflow-y: auto;
+
     }
     .event-retrieval-list li{
-        height: 36px;
+        height: 18px;
         display: flex;
         align-items: center;
         justify-content: flex-start;
-        padding-bottom: 5px;
-        padding-top: 5px;
         border-bottom: 1px solid #142852;
+        overflow: hidden;
+        text-align: left;
+        padding: 14px 0;
     }
     .event-retrieval-list li:last-child{
         border-bottom: none;
@@ -222,17 +311,17 @@
         height: 100%;
         display: inline-block;
         margin-right: 10px;
+        width: 14px;
     }
     .event-retrieval-list li p{
         height: 100%;
         font-size: 13px;
         color: #fff;
-        word-break: break-all;
-        text-overflow: ellipsis;
-        overflow: hidden;
-        display: -webkit-box;
-        -webkit-line-clamp: 1;
-        -webkit-box-orient: vertical;
+        white-space:nowrap;
+        overflow:hidden;
+        text-overflow:ellipsis;
+        display: inline-block;
+        width: calc(100% - 34px);
     }
     /deep/ .el-input__inner{
         background-color: rgba(0,0,0,0);
