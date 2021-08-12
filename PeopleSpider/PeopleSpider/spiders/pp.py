@@ -65,7 +65,7 @@ class PeopleSpider(RedisSpider):
         yield Request("http://search.people.cn/api-search/front/search", method="POST",
                       body=json.dumps(self.data), headers=self.headers,
                       callback=self.parse,
-                      meta={'key': key, 'page': page}, dont_filter=True)
+                      meta={'key': key, 'page': page})
 
     def parse(self, response):
 
@@ -112,7 +112,7 @@ class PeopleSpider(RedisSpider):
             yield Request("http://search.people.cn/api-search/front/search", method="POST",
                           body=json.dumps(self.data), headers=self.headers,
                           callback=self.parse,
-                          meta={'key': key, 'page': page}, dont_filter=True)
+                          meta={'key': key, 'page': page})
         # else:
         #     pass
             # time.sleep(60*60*4)
