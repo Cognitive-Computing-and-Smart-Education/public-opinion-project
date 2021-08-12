@@ -17,14 +17,18 @@
                     暂无数据
                 </div>
                 <div style="height: 100%;width: 100%;overflow-y: auto" v-else class="infinite-list-wrapper">
-                    <ul class="event-retrieval-list" v-infinite-scroll="load" @infinite-scroll-disabled="disabled" :infinite-scroll-delay="500">
+                    <ul class="event-retrieval-list" v-infinite-scroll="load" @infinite-scroll-disabled="disabled" :infinite-scroll-delay="700">
                         <li v-for="(item,index) in retrievalList" :key="`retrievalList-${index}`">
                             <span>{{ index + 1 }}</span>
-                            <p>{{ item.title }}</p>
+                            <p class="audiot_style">{{ item.title }}</p>
+                        </li>
+                        <li v-if="loading" style="color: #fff;text-align: center;">
+                            加载中...
+                        </li>
+                        <li v-if="noMore" style="color: #fff;text-align: center">
+                            没有更多了
                         </li>
                     </ul>
-                    <p v-if="loading">加载中...</p>
-                    <p v-if="noMore">没有更多了</p>
                 </div>
             </div>
         </div>
@@ -133,17 +137,20 @@
                 })*/
                 let list = []
                 for(let i=this.pageSize * 10; i< this.listData.length; i++) {
-                    if(i > (this.pageSize + 1) * 10){
+                    if(i > (this.pageSize + 1) * 10 - 1){
                         break;
                     }
-                    list.push(this.listData[i])
+                    this.retrievalList.push(this.listData[i])
                 }
-                this.retrievalList = this.retrievalList.concat(list)
-                this.loading = false
+                // this.retrievalList = this.retrievalList.concat(list)
                 this.pageSize = this.pageSize + 1
+                this.loading = false
                 if(this.listData.length <= this.pageSize * 10) {
                     this.finished = true
                 }
+                this.$nextTick(function () {
+                    this.redList(this.retrievalList)
+                })
             },
             init(Area_name) {
                 this.Stop()
@@ -185,41 +192,46 @@
                     }
                 })
             },
+            redList(listData) {
+                let audiot_style = document.getElementsByClassName("audiot_style");
+                let inputValue = this.retrievalForm.search;
+                if(listData.length > 0) {
+                    for (let i = (this.pageSize - 1) * 10; i < listData.length; i++) {
+                        if (listData[i].title.indexOf(inputValue) >= 0) {
+                            var values = listData[i].title.split(inputValue);
+                            audiot_style[i].innerHTML = values.join(
+                                '<span style="color:red;">' + inputValue + "</span>"
+                            );
+                        }
+                    }
+                }
+            },
             onSubmit() {
                 this.pageSize = 0;
                 this.pageNum = 10;
                 this.finished = false;
                 getNews({ keyword: this.retrievalForm.search }).then(res => {
-                    let audiot_style = document.getElementsByClassName("audiot_style");
                     let translateText = res.data.News_list;
-                    let inputValue = this.retrievalForm.search;
                     // listData
-                    if(translateText.length > 0) {
-                        for (let i = 0; i < translateText.length; i++) {
-                            if (translateText[i].title.indexOf(inputValue) >= 0) {
-                                var values = translateText[i].title.split(inputValue);
-                                audiot_style[i].innerHTML = values.join(
-                                    '<span style="color:red;">' + inputValue + "</span>"
-                                );
-                            }
-                        }
-                    }
+
                     if(translateText.length > 10) {
                         this.listData = translateText
                         let list = []
                         for(let i=0; i < this.listData.length; i++) {
-                            if(i > 10){
+                            if(i > 9){
                                 break;
                             }
                             list.push(this.listData[i])
                         }
                         this.retrievalList = list
                         this.pageSize = this.pageSize + 1
-                        if(this.listData.length < this.pageSize * 10) {
+                        this.redList(this.retrievalList)
+                        if(this.listData.length <= this.pageSize * 10) {
                             this.finished = true
                         }
                     }else {
                         this.retrievalList = res.data.News_list
+                        this.redList(this.retrievalList)
                         this.finished = true
                     }
                 })
@@ -301,6 +313,7 @@
         overflow: hidden;
         text-align: left;
         padding: 14px 0;
+        width: 100%;
     }
     .event-retrieval-list li:last-child{
         border-bottom: none;
