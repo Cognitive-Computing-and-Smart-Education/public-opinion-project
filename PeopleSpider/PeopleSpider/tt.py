@@ -7,6 +7,7 @@ keys = ['教育', '教学', '体育教育', '智慧教育', '科技', '体育', 
 
 for _ in keys:
     rd.lpush('pp:keyword', _)
+    rd.lpush('xinhuanews:keyword', _)
 
 #
 # for _ in keys:
