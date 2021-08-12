@@ -9,11 +9,11 @@ NEWSPIDER_MODULE = 'PeopleSpider.spiders'
 ROBOTSTXT_OBEY = False
 
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
-CONCURRENT_REQUESTS = 32
+CONCURRENT_REQUESTS = 4
 
 # 指定Redis的主机名和端口
 # REDIS_HOST = 'localhost'
-REDIS_HOST = '172.18.40.39'
+REDIS_HOST = '172.18.40.131'
 REDIS_PORT = 6379
 
 # 设置重复过滤器模块
@@ -26,8 +26,10 @@ SCHEDULER_PERSIST = True
 # SCHEDULER_QUEUE_CLASS = "scrapy_redis.queue.SpiderQueue"
 # SCHEDULER_QUEUE_CLASS = "scrapy_redis.queue.SpiderStack"
 
-
-DOWNLOAD_DELAY = 1
+ITEM_PIPELINES = {
+    'PeopleSpider.pipelines.TitlePipeline': 300,
+}
+DOWNLOAD_DELAY = 2
 
 # LOG_LEVEL = 'WARNING'
 LOG_LEVEL = 'DEBUG'

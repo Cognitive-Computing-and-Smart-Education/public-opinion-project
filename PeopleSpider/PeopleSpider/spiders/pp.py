@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import scrapy
+# import scrapy
 import json
 from scrapy import Request, FormRequest
 from PeopleSpider.items import *
@@ -7,18 +7,25 @@ from lxml.etree import HTML
 from PeopleSpider.db import db
 from pymysql.converters import escape_string
 import time
-from fake_useragent import UserAgent
+from scrapy_redis.spiders import RedisSpider
 
 
 # from PeopleSpider import ema
 
 
-class PeopleSpider(scrapy.Spider):
+class PeopleSpider(RedisSpider):
+    # 定义爬取新闻的时间限制，开始与结束，均以秒为单位
+    now = int(time.time())  # 获取当前时间
+
+    # 设置间隔,目前为15天前至今
+    limit = 15 * 24 * 60 * 60
+    statiTime = now - limit
+
     name = 'pp'
-    allowed_domains = ['people.cn', '*']
-    url = 'http://search.people.cn/api-search/elasticSearch/search'
-    keys = ['教育', '教学', '体育教育', '智慧教育', '科技', '体育', ] + ['国际教育', '特殊教育', '学科竞赛', '职业教育', 'K12', "婴儿教育", "幼儿教育"] + [
-        '艺术培训', '远程教育', '线下教育', 'steam教育', '应试教育', '中考', '高考', '课外辅导', '科普教育', '海外教育', '爱国教育', ]
+    # allowed_domains = ['people.cn', '*']
+    # url = 'http://search.people.cn/api-search/elasticSearch/search' #旧接口不能用了
+    # url = 'http://search.people.cn/api-search/front/search'
+    #
 
     # keys = ['艺术培训', '远程教育', '线下教育', 'steam教育', '应试教育', '中考', '高考', '课外辅导', '科普教育', '海外教育', '爱国教育', ]
 
@@ -29,42 +36,44 @@ class PeopleSpider(scrapy.Spider):
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) '
                       'Chrome/68.0.3440.75 Safari/537.36',
     }
-    data = {
-        "endTime": 0,
-        "hasContent": True,
-        "hasTitle": True,
-        "isFuzzy": True,
-        "limit": 10,
-        "sortType": 2,
-        "startTime": 0,
-        "type": 1,
-    }
+    data = {"limit": 100, "hasTitle": True, "hasContent": True, "isFuzzy": True, "type": 1, "sortType": 2,
+            "startTime": statiTime * 1000, "endTime": now * 1000}
     db1 = db(db="weibo")
-    SQL = "CREATE TABLE IF NOT EXISTS `people_news`  (`title_id` bigint NOT NULL,`originalName` varchar(255) ,`title` varchar(255) ,`url` varchar(255) ,`key` varchar(255) ,`text` longtext,`upload_time` datetime,PRIMARY KEY (`title_id`) USING BTREE);"
+    SQL = "CREATE TABLE IF NOT EXISTS `people_news`  (`title_id` bigint NOT NULL,`originalName` varchar(255) ,`title` varchar(255) ,`url` varchar(255) ,`key` varchar(255) ,`text` longtext,`time` datetime,PRIMARY KEY (`title_id`) USING BTREE);"
     db1.exec_(SQL)
+    redis_key = "pp:keyword"
 
-    db2 = db(db="redis")
+    # db2 = db(db="redis")
 
-    def start_requests(self):
-        for key in self.keys:
-            sql = f"select `page` from people_data where `key`='{key}'"
+    def make_request_from_data(self, data):
+        key = data.decode('utf-8')
+        # for key in keys:
+        page = 1
+        sql = f"select `page` from people_data where `key`='{key}'"
 
-            if not self.db2.query(sql):
-                self.db2.exec_(f"insert into people_data VALUES ('{key}',1)")
+        # if not self.db2.query(sql):
+        #     self.db2.exec_(f"insert into people_data VALUES ('{key}',1)")
+        #
+        # page = self.db2.query(sql)[0][0]
 
-            page = self.db2.query(sql)[0][0]
-
-            self.data['key'] = key
-            self.data['page'] = page
-            self.headers['Referer'] = f'http://search.people.cn/s/?keyword={key}&st=0&_=1627454684554'
-            yield Request(self.url, method="POST", body=json.dumps(self.data), headers=self.headers,
-                          callback=self.parse,
-                          meta={'key': key, 'page': page}, dont_filter=True)
+        self.data['key'] = key
+        self.data['page'] = page
+        self.headers['Referer'] = f'http://search.people.cn/s/?keyword={key}&st=0&_=1628664973889'
+        # data = {}
+        # for k, v in self.data.items():
+        #     data[k] = str(v).lower()
+        yield Request("http://search.people.cn/api-search/front/search", method="POST",
+                      body=json.dumps(self.data), headers=self.headers,
+                      callback=self.parse,
+                      meta={'key': key, 'page': page})
 
     def parse(self, response):
 
         data = json.loads(response.text).get("data")
 
+        # print(data)
+        key = response.meta['key']
+        self.data['key'] = key
         pages = data.get('pages')
         if response.meta['page'] <= pages:
             info_lsit = data.get("records")
@@ -90,22 +99,28 @@ class PeopleSpider(scrapy.Spider):
                 yield item
 
                 yield Request(url=item['url'], headers=self.headers, callback=self.parse_text,
-                              meta={'title_id': item['title_id'], 'item': item}, dont_filter=True)
+                              meta={'title_id': item['title_id'], 'item': item}, )
+                # break
 
-            key = response.meta['key']
             # sql = f"select `page` from people_data where `key`='{key}'"
             # page = int(self.db2.query(sql)[0][0])
             page = response.meta['page'] + 1
 
-            self.db2.exec_(f"update people_data set `page`={page} where `key`='{key}'")
+            # self.db2.exec_(f"update people_data set `page`={page} where `key`='{key}'")
 
-            self.data['key'] = key
             self.data['page'] = page
-            yield Request(self.url, body=json.dumps(self.data), method='POST', headers=self.headers,
+            yield Request("http://search.people.cn/api-search/front/search", method="POST",
+                          body=json.dumps(self.data), headers=self.headers,
                           callback=self.parse,
-                          meta={'key': key, 'page': page}, )
-        else:
-            return
+                          meta={'key': key, 'page': page})
+        # else:
+        #     pass
+            # time.sleep(60*60*4)
+            # page = 1
+            # yield Request("http://search.people.cn/api-search/front/search", method="POST",
+            #               body=json.dumps(self.data), headers=self.headers,
+            #               callback=self.parse,
+            #               meta={'key': key, 'page': page}, dont_filter=True)
 
     def parse_text(self, response):
         # 文本内容
