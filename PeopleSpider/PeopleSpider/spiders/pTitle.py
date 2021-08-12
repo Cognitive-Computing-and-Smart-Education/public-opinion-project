@@ -2,8 +2,13 @@
 # print(a.decode('utf-8'))
 import time
 
-now = int(time.time())
+# now = int(time.time())
+#
+# s = 1627776900000 // 1000
+# print(now)
+# print(now -s)
+import json
 
-s = 1627776900000 // 1000
-print(now)
-print(now -s)
+a = '{"code":200,"content":{"recommendation":null,"keyword":"资源","sortField":"0","optionsSearchTypes":null,"curPage":793,"results":null}}'
+b = json.loads(a)
+print(b)
