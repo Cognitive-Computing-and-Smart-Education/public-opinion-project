@@ -23,7 +23,6 @@ class PeopleTitle(Item):
     title = Field()
     url = Field()
     time = Field()
-    keyword = Field()
 
 
 class PeopleText(Item):

@@ -33,9 +33,6 @@ class TitlePipeline(object):
                 item['title_id'], item['title'], item['keyword'], item['time'], item['originalName'], item['url'],
                 item['key'], )
 
-            # sql = """INSERT INTO xinhuanews(`contentId`,`title`,`keyword`,`pubtime`,`sitename`,`url`,`key`) SELECT  '%s','%s','%s','%s','%s','%s','%s' FROM DUAL WHERE  NOT EXISTS ( SELECT `url`  FROM xinhuanews  WHERE `url`='%s' );""" % (
-            #     item['contentId'], item['title'], item['keyword'], item['pubtime'], item['sitename'], item['url'],
-            #     item['key'], item['url'],)
             self.db.exec_(sql)
             # print(sql)
             return item

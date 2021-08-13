@@ -13,7 +13,7 @@ class db():
 
     # port = 8888
 
-    def __init__(self, db):
+    def __init__(self, db='weibo'):
         self.db = db
 
     def get_conn(self):

@@ -1,5 +1,5 @@
 # import scrapy
-from scrapy import Spider, Request
+from scrapy import Request
 import json
 from lxml.etree import HTML
 from pymysql.converters import escape_string
@@ -14,18 +14,19 @@ class XinhuanewsSpider(RedisSpider):
 
     # 获取截止十五天前的数据
     startTime = now - 16 * 24 * 60 * 60
-    name = 'xinhuanews'
+    name = 'xinhuanet'
     # allowed_domains = ['so.news.cn', ]
     # keys = ['教育', '教学', '体育教育', '智慧教育', '科技', '体育', '国际教育', '特殊教育', '学科竞赛', '职业教育', 'K12', '婴儿教育', '幼儿教育', '艺术培训',
     #         '远程教育', '线下教育', 'steam教育', '应试教育', '中考', '高考', '课外辅导', '科普教育', '海外教育', '爱国教育']
     # keys = ['教育']
     headers = {
-        'user-agent': "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.114 Safari/537.36",
+        'user-agent': "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) "
+                      "Chrome/91.0.4472.114 Safari/537.36",
         "X-Requested-With": "XMLHttpRequest",
     }
     start_urls = 'http://so.news.cn/getNews?keyword={key}&curPage={page}&sortField=0&searchFields=1&lang=cn'
 
-    db = db(db="weibo")
+    db = db()
     SQL = """CREATE TABLE IF NOT EXISTS `xinhuanews`  (
     `title_id` bigint NOT NULL,
     `title` varchar(255),
@@ -39,12 +40,12 @@ class XinhuanewsSpider(RedisSpider):
     PRIMARY KEY (`title_id`) USING BTREE) ;"""
     db.exec_(SQL)
 
-    redis_key = "xinhuanews:keyword"
+    redis_key = "xinhuanet:keys"
 
     def make_request_from_data(self, data):
         page = 1
         key = data.decode('utf-8')
-        yield Request(url=self.start_urls.format(key=key, page=page), callback=self.parse,
+        yield Request(url=self.start_urls.format(key=key, page=page), callback=self.parse, dont_filter=True,
                       meta={'key': key, "page": page})
         # break
 
@@ -62,9 +63,9 @@ class XinhuanewsSpider(RedisSpider):
 
                 # 判断日期，中断爬虫
                 if time.mktime(time.strptime(upload_time, "%Y-%m-%d %H:%M:%S")) < self.startTime:
-                    break
+                    return
 
-                # 新闻ID
+                    # 新闻ID
                 title_id = result.get("contentId")
 
                 # 获取标题，并对标题文字提取，去除空字符，，使其符合mysql标准
@@ -101,7 +102,7 @@ class XinhuanewsSpider(RedisSpider):
                 # break
             # 下一页
             page += 1
-            yield Request(url=self.start_urls.format(key=key, page=page), callback=self.parse,
+            yield Request(url=self.start_urls.format(key=key, page=page), callback=self.parse, dont_filter=True,
                           meta={'key': key, "page": page})
 
     # 获取文章内容
