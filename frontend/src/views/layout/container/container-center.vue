@@ -42,6 +42,7 @@
                         active-text="全国数据">
                 </el-switch>
             </div>
+<!--            <div style="position: absolute;z-index: 999;right: 30px;bottom: 30px;color: #fff;cursor: pointer" @click="pushBtn">跳转</div>-->
         </div>
         <div class="industry-voice-box">
             <div class="industry-voice-title">细分行业声量</div>
@@ -91,6 +92,11 @@
                 if(_that.mapSwitch) {
                     _that.changeHomeAreaName('全国');
                 }
+            },
+            pushBtn() {
+                this.$router.push({
+                    path: '/article',
+                })
             },
             // async
             async init () {

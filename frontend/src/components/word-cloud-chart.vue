@@ -116,12 +116,12 @@ export default {
             };
             this.chart.setOption(option);
             this.chart.on("click", (params) => {
-                this.objecthis.isShow = true;
-                this.objecthis.dialogTitle = "";
-                this.objecthis.dialogQuery = {
-                    headType: 3,
-                    zhutName: params.data.name
-                };
+                // this.objecthis.isShow = true;
+                // this.objecthis.dialogTitle = "";
+                // this.objecthis.dialogQuery = {
+                //     headType: 3,
+                //     zhutName: params.data.name
+                // };
                 // this.objecthis.dialogComponentName = () => import("./ldgbsjt-detail-sjtjl-list");
             });
         }

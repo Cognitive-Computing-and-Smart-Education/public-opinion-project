@@ -19,7 +19,7 @@ class HttpRequest {
     }
     interceptors(instance) {
         instance.interceptors.request.use(config => {
-            console.log(config)
+            // console.log(config)
             // 添加全局去除空格
             // if(!config.noTrim){
             //     //全局去除空格 可以用noTrim 来控制不进行全局去除空格

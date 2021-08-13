@@ -18,17 +18,13 @@
                 </div>
                 <div style="height: 100%;width: 100%;overflow-y: auto" v-else class="infinite-list-wrapper">
                     <ul class="event-retrieval-list" v-infinite-scroll="load" @infinite-scroll-disabled="disabled" :infinite-scroll-delay="700">
-                        <li v-for="(item,index) in retrievalList" :key="`retrievalList-${index}`">
+                        <li v-for="(item,index) in retrievalList" :key="`retrievalList-${index}`" @click="goDetail(item)">
                             <span>{{ index + 1 }}</span>
                             <p class="audiot_style">{{ item.title }}</p>
                         </li>
-                        <li v-if="loading" style="color: #fff;text-align: center;">
-                            加载中...
-                        </li>
-                        <li v-if="noMore" style="color: #fff;text-align: center">
-                            没有更多了
-                        </li>
                     </ul>
+                    <p v-if="loading" style="color: #fff;text-align: center;">加载中...</p>
+                    <p v-if="noMore" style="color: #fff;text-align: center">没有更多了</p>
                 </div>
             </div>
         </div>
@@ -109,6 +105,9 @@
                     var y = b[key];
                     return ((x < y) ? -1 : (x > y) ? 1 : 0);
                 })
+            },
+            goDetail(item) {
+                window.open(item.url,'_blank')
             },
             load () {
                 this.loading = true
@@ -314,6 +313,7 @@
         text-align: left;
         padding: 14px 0;
         width: 100%;
+        cursor: pointer;
     }
     .event-retrieval-list li:last-child{
         border-bottom: none;
