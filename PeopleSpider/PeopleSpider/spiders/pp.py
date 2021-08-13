@@ -78,7 +78,7 @@ class PeopleSpider(RedisSpider):
         if response.meta['page'] <= pages:
             info_lsit = data.get("records")
             for info in info_lsit:
-                item = TitleItem()
+                item = PeopleTitle()
                 item['title_id'] = info.get('id')
                 item['originalName'] = escape_string(info.get('originalName'))
                 title = info.get('title')
@@ -128,7 +128,7 @@ class PeopleSpider(RedisSpider):
         text = ["".join(i.split()) for i in text]
         text = ''.join(text)
 
-        textitem = TextItem()
+        textitem = PeopleText()
 
         textitem['title_id'] = response.meta['title_id']
         # item['originalName'] = originalName

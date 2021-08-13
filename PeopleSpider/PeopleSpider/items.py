@@ -14,7 +14,7 @@ class PeoplespiderItem(Item):
     pass
 
 
-class TitleItem(Item):
+class PeopleTitle(Item):
     # define the fields for your item here like:
     # name = scrapy.Field()
     title_id = Field()
@@ -22,18 +22,31 @@ class TitleItem(Item):
     key = Field()
     title = Field()
     url = Field()
-    upload_time = Field()
-    textitem = Field()
-    # item['originalName'] = originalName
-    # item['title'] = title
-    # item['upload_time'] = upload_time
-    sentiment = Field()
+    time = Field()
+    keyword = Field()
 
 
-class TextItem(Item):
+class PeopleText(Item):
+    # define the fields for your item here like:
+    # name = scrapy.Field()
+    title_id = Field()
+    text = Field()
+
+
+class XinhuaTitle(Item):
     # define the fields for your item here like:
     # name = scrapy.Field()
     title_id = Field()
     originalName = Field()
+    key = Field()
     title = Field()
+    url = Field()
+    time = Field()
+    keyword = Field()
+
+
+class XinhuaText(Item):
+    # define the fields for your item here like:
+    # name = scrapy.Field()
+    title_id = Field()
     text = Field()

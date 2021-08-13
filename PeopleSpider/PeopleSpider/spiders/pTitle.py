@@ -2,8 +2,18 @@
 # print(a.decode('utf-8'))
 import time
 
+# now = int(time.time())
+#
+# s = 1627776900000 // 1000
+# print(now)
+# print(now -s)
+import json
+
 now = int(time.time())
 
-s = 1627776900000 // 1000
+tt = "2021-08-01 19:24:02"
+now2Str = time.strptime(tt, "%Y-%m-%d %H:%M:%S")
+
 print(now)
-print(now -s)
+print(int(time.mktime(now2Str)))
+print(tt)

@@ -28,6 +28,7 @@ SCHEDULER_PERSIST = True
 
 ITEM_PIPELINES = {
     'PeopleSpider.pipelines.TitlePipeline': 300,
+    # 'PeopleSpider.pipelines.XinhuanetspiderPipeline': 400,
 }
 DOWNLOAD_DELAY = 2
 
