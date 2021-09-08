@@ -13,7 +13,7 @@ CONCURRENT_REQUESTS = 4
 
 # 指定Redis的主机名和端口
 # REDIS_HOST = 'localhost'
-REDIS_HOST = '172.18.40.131'
+REDIS_HOST = '127.0.0.1'
 REDIS_PORT = 6379
 
 # 设置重复过滤器模块

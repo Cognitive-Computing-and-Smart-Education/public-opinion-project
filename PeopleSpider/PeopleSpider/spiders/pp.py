@@ -18,10 +18,10 @@ class PeopleSpider(RedisSpider):
     now = int(time.time())  # 获取当前时间
 
     # # 设置间隔,目前为15天前至今
-    # limit = 1 * 2 * 60 * 60
+    limit = 18 * 24 * 60 * 60
 
     # 设置间隔,目前为一天前至今
-    limit = 1 * 1 * 60 * 60
+    # limit = 1 * 1 * 60 * 60
     statiTime = now - limit
 
     name = 'people'
@@ -131,6 +131,7 @@ class PeopleSpider(RedisSpider):
         # item['originalName'] = originalName
         # item['title'] = title
         # item['upload_time'] = upload_time
+
         textitem['text'] = escape_string(text)
 
         yield textitem
